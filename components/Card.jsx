@@ -1,5 +1,5 @@
 import * as React from "react";
-// import Link from "next/link";
+import Link from "next/link";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -36,28 +36,28 @@ export default function RecipeReviewCard(meal) {
 
   return (
     <Card sx={{ maxWidth: 345 }} className="customCard">
-      <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            {meal.meal.strCategory.charAt(0)}
-          </Avatar>
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
-        title={meal.meal.strMeal}
-        subheader={meal.meal.strArea}
-      />
-      {/* <Link href={`/meal/${meal.meal.idMeal}`}> */}
+        <CardHeader
+          avatar={
+            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+              {meal.meal.strCategory.charAt(0)}
+            </Avatar>
+          }
+          action={
+            <IconButton aria-label="settings">
+              <MoreVertIcon />
+            </IconButton>
+          }
+          title={meal.meal.strMeal}
+          subheader={meal.meal.strArea}
+        />
+        <Link href={`/meal/${meal.meal.idMeal}`}>
         <CardMedia
           component="img"
           height="194"
           image={meal.meal.strMealThumb}
           alt="Paella dish"
         />
-      {/* </Link> */}
+        </Link>
       <CardContent>
         <Typography variant="body2" color="text.secondary" noWrap>
           {meal.meal.strInstructions}
