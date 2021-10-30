@@ -9,10 +9,8 @@ export default function CardGrid() {
   useEffect(() => {
     const getRandomRecipe = async () => {
       try {
-        for (let i = 0; i < 6; i++) {
           const response = await axios.get("/api/mealdb?type=getRandomRecipe");
-          setMeals((prevState) => [...prevState, ...response.data.meals]);
-        }
+          setMeals([...response.data.meals]);
       } catch (error) {
         console.log(error);
       }

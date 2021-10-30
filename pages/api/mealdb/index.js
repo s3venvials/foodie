@@ -1,7 +1,7 @@
-import { getRandom, getById } from "../../../services";
+import { getRandom, getById, getByIngredient } from "../../../services";
 
 export default async function handler(req, res) {
-  const { type, id } = req.query;
+  const { type, id, ingredient } = req.query;
 
   switch (type) {
     case "getRandomRecipe":
@@ -10,6 +10,8 @@ export default async function handler(req, res) {
     case "getRecipeById":
         await getById(req, res, id);
       break;
+    case "getByIngredient":
+        await getByIngredient(req, res, ingredient);
     default:
       break;
   }

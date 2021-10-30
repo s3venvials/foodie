@@ -1,74 +1,71 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { TextField, Autocomplete } from "@mui/material";
 
-export default function GoogleMaps() {
-  const [value, setValue] = React.useState(null);
-  const [inputValue, setInputValue] = React.useState('');
-  const [options, setOptions] = React.useState([]);
-  const loaded = React.useRef(false);
+export default function ComboBox() {
+  const [recipes, setRecipes] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+  const [value, setValue] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (value) {
+      router.push(`/meal/${value.idMeal}`);
+      return;
+    }
+  }, [value]);
+
+  useEffect(() => {
+    let active = true;
+
+    const getRecipes = async () => {
+      try {
+        const res = await axios.get(
+          `/api/mealdb?type=getByIngredient&ingredient=${inputValue}`
+        );
+
+        if (res.status === 200 && res.data) {
+          if (res.data.meals?.length > 0) {
+            setRecipes([...res.data.meals]);
+            return;
+          }
+        }
+        setRecipes([]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (inputValue !== "" && active) {
+      getRecipes();
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [inputValue]);
 
   return (
     <Autocomplete
-      id="google-map-demo"
-      getOptionLabel={(option) =>
-        typeof option === 'string' ? option : option.description
-      }
+      disablePortal
+      id="searchRecipeIngredientsField"
+      options={recipes}
+      getOptionLabel={(recipe) => recipe.strMeal || ""}
       filterOptions={(x) => x}
-      options={options}
-      autoComplete
-      includeInputInList
-      filterSelectedOptions
-      value={value}
+      sx={{ mt: 5, mb: 5 }}
+      value={value ?? ''}
       onChange={(event, newValue) => {
-        setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
       }}
-      onInputChange={(event, newInputValue) => {
-        setInputValue(newInputValue);
+      inputValue={inputValue ?? ''}
+      onInputChange={(event, inputValue) => {
+        setInputValue(inputValue)
       }}
+      isOptionEqualToValue={(option, value) => option.value === value.value}
       renderInput={(params) => (
-        <TextField {...params} label="Search by Recipe" sx={{ mt: 5, mb: 5 }} />
+        <TextField {...params} label="Search by ingredient" />
       )}
-      renderOption={(props, option) => {
-        const matches = option.structured_formatting.main_text_matched_substrings;
-        const parts = parse(
-          option.structured_formatting.main_text,
-          matches.map((match) => [match.offset, match.offset + match.length]),
-        );
-
-        return (
-          <li {...props}>
-            <Grid container alignItems="center">
-              <Grid item>
-                <Box
-                  component={LocationOnIcon}
-                  sx={{ color: 'text.secondary', mr: 2 }}
-                />
-              </Grid>
-              <Grid item xs>
-                {parts.map((part, index) => (
-                  <span
-                    key={index}
-                    style={{
-                      fontWeight: part.highlight ? 700 : 400,
-                    }}
-                  >
-                    {part.text}
-                  </span>
-                ))}
-
-                <Typography variant="body2" color="text.secondary">
-                  {option.structured_formatting.secondary_text}
-                </Typography>
-              </Grid>
-            </Grid>
-          </li>
-        );
-      }}
     />
   );
 }
