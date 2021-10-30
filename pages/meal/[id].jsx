@@ -20,7 +20,8 @@ const IngrediantsList = (meal) => {
   useEffect(() => {
     if (
       Object.keys(meal.meal) !== undefined &&
-      Object.keys(meal.meal).length !== 0
+      Object.keys(meal.meal).length !== 0 &&
+      ingrediants.length === 0
     ) {
       const temp = [];
       for (const [key, value] of Object.entries(meal.meal)) {
@@ -52,8 +53,8 @@ const IngrediantsList = (meal) => {
       </Typography>
       <nav aria-label="main ingrediants list">
         <List>
-          {list.map((ingrediant) => (
-            <ListItem key={ingrediant}>
+          {list.map((ingrediant, index) => (
+            <ListItem key={ingrediant + index}>
               <ListItemText primary={ingrediant} />
             </ListItem>
           ))}
@@ -67,7 +68,13 @@ export default function Meal() {
   const [meal, setMeal] = useState({});
 
   useEffect(() => {
-    const mealId = window.location.pathname.split("/")[2];
+    let active = true;
+    let mealId;
+
+    if (window !== undefined) {
+      mealId = window.location.pathname.split("/")[2];
+    }
+
     const getMealById = async () => {
       try {
         const response = await axios.get(
@@ -78,7 +85,14 @@ export default function Meal() {
         console.log(error);
       }
     };
-    getMealById();
+
+    if (active) {
+      getMealById();
+    }
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
@@ -87,12 +101,30 @@ export default function Meal() {
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <img src={`${meal.strMealThumb}`} alt="meal" width="100%" />
-            <IconButton aria-label="add to favorites" title="add to favorites">
-              <Favorite />
-            </IconButton>
-            <IconButton aria-label="share" title="share">
-              <Share />
-            </IconButton>
+            <Grid container>
+              <Grid item xs={8}>
+                <Typography variant="subtitle2" component="h6" sx={{ marginTop: "0.3em" }}>
+                  {meal.strMeal}
+                </Typography>
+              </Grid>
+              <Grid item xs={4}>
+                <IconButton
+                  sx={{ float: "right" }}
+                  aria-label="add to favorites"
+                  title="add to favorites"
+                >
+                  <Favorite />
+                </IconButton>
+                <IconButton
+                  aria-label="share"
+                  title="share"
+                  sx={{ float: "right" }}
+                >
+                  <Share />
+                </IconButton>
+              </Grid>
+            </Grid>
+
             <Typography variant="h4" paragraph sx={{ mt: 2 }}>
               Instructions
             </Typography>
