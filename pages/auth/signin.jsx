@@ -18,7 +18,6 @@ const theme = createTheme();
 
 export default function SignIn({ providers }) {
   const [imageUrl, setImageUrl] = useState("");
-  console.log(providers);
 
   const getColorAndIcon = (name) => {
     switch (name) {
@@ -29,7 +28,7 @@ export default function SignIn({ providers }) {
       case "Google":
         return { color: "#e53935", icon: <GoogleIcon /> };
       default:
-        return;
+        return { color: "", icon: "" };
     }
   };
 

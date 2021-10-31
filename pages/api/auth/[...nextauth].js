@@ -21,9 +21,9 @@ export default NextAuth({
       clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
       authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&access_type=offline&response_type=code',
     }),
-    Providers.Facebook({
-      clientId: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_SECRET
-    }),
+    // Providers.Facebook({
+    //   clientId: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID,
+    //   clientSecret: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_SECRET
+    // }),
   ],
 });
