@@ -9,12 +9,29 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import GoogleIcon from "@mui/icons-material/Google";
+import FacebookIcon from "@mui/icons-material/Facebook";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme();
 
 export default function SignIn({ providers }) {
   const [imageUrl, setImageUrl] = useState("");
+  console.log(providers);
+
+  const getColorAndIcon = (name) => {
+    switch (name) {
+      case "GitHub":
+        return { color: "#5c6bc0", icon: <GitHubIcon /> };
+      case "Facebook":
+        return { color: "#2196f3", icon: <FacebookIcon /> };
+      case "Google":
+        return { color: "#e53935", icon: <GoogleIcon /> };
+      default:
+        return;
+    }
+  };
 
   useEffect(() => {
     let isActive = true;
@@ -31,7 +48,7 @@ export default function SignIn({ providers }) {
         console.log(error);
         setImageUrl("https://source.unsplash.com/random");
       }
-    }
+    };
 
     if (isActive) {
       getSingleRandomImg();
@@ -39,7 +56,7 @@ export default function SignIn({ providers }) {
 
     return () => {
       isActive = false;
-    }
+    };
   }, []);
 
   return (
@@ -62,7 +79,15 @@ export default function SignIn({ providers }) {
             backgroundPosition: "center",
           }}
         />
-        <Grid item xs={12} sm={12} md={6} component={Paper} elevation={6} square>
+        <Grid
+          item
+          xs={12}
+          sm={12}
+          md={6}
+          component={Paper}
+          elevation={6}
+          square
+        >
           <Box
             sx={{
               my: 15,
@@ -72,23 +97,22 @@ export default function SignIn({ providers }) {
               alignItems: "center",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+            <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Box
-              sx={{ mt: 2 }}
-            >
+            <Box sx={{ mt: 2 }}>
               <>
                 {Object.values(providers).map((provider) => (
                   <div key={provider.name}>
                     <Button
-                      sx={{ mb: 2 }}
                       variant="outlined"
                       onClick={() => signIn(provider.id)}
                       fullWidth
+                      startIcon={getColorAndIcon(provider.name).icon}
+                      sx={{ color: `${getColorAndIcon(provider.name).color}`, mb: 2 }}
                     >
                       Sign in with {provider.name}
                     </Button>
