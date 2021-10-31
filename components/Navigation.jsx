@@ -25,7 +25,7 @@ export default function Navigation() {
           >
             <Fastfood />
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Foodie
+              FC
             </Typography>
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
