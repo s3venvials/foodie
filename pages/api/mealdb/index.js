@@ -1,9 +1,10 @@
 import {
-  getRandom,
+  getRandoms,
   getById,
   getByIngredient,
   getCategories,
   getCategoryByName,
+  getSingleRandom,
 } from "../../../services";
 
 export default async function handler(req, res) {
@@ -11,7 +12,10 @@ export default async function handler(req, res) {
 
   switch (type) {
     case "getRandomRecipes":
-      await getRandom(req, res);
+      await getRandoms(req, res);
+      break;
+    case "getSingleRandom":
+      await getSingleRandom(req, res);
       break;
     case "getRecipeById":
       await getById(req, res, id);

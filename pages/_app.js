@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
+import { Provider } from "next-auth/client";
 import theme from "../styles/theme";
 import createEmotionCache from "../components/createEmotionCache";
 
@@ -19,16 +20,17 @@ export default function MyApp(props) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   return (
-    <CacheProvider value={emotionCache}>
-      <Header />
-      <ThemeProvider theme={theme}>
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-        <CssBaseline />
-        <Navigation />
-        <Component {...pageProps} />
-        <Footer />
-      </ThemeProvider>
-    </CacheProvider>
+    <Provider>
+      <CacheProvider value={emotionCache}>
+        <Header />
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Navigation />
+          <Component {...pageProps} />
+          <Footer />
+        </ThemeProvider>
+      </CacheProvider>
+    </Provider>
   );
 }
 

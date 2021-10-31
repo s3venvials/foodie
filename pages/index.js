@@ -37,7 +37,7 @@ export default function Home() {
           Welcome to
           <Typography variant="span" color="primary">
             {" "}
-            Foodie Cusines!
+            Foodie Cuisines!
           </Typography>
         </Typography>
 

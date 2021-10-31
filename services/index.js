@@ -7,9 +7,21 @@ const BASE_URL = `https://www.themealdb.com/api/json/v2/${process.env.NEXT_PUBLI
 
 // https://www.themealdb.com/api.php
 
-export const getRandom = async (req, res) => {
+export const getRandoms = async (req, res) => {
   try {
     const response = await axios.get(`${BASE_URL}/randomselection.php`);
+    if (response.status === 200) {
+      return res.status(200).json(response.data);
+    }
+    return res.status(403).json({ message: "failed to make request" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getSingleRandom = async (req, res) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/random.php`);
     if (response.status === 200) {
       return res.status(200).json(response.data);
     }
