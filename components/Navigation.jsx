@@ -41,7 +41,7 @@ export default function Navigation() {
             </MenuItem>
             <Button
               color="primary"
-              variant="outlined"
+              variant="text"
               onClick={() => signOut()}
               startIcon={<ExitToAppIcon />}
             >
