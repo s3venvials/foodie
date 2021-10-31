@@ -7,9 +7,8 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Fastfood from "@mui/icons-material/Fastfood";
-import LoginIcon from '@mui/icons-material/Login';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import MenuItem from "@mui/material/MenuItem";
+import LoginIcon from "@mui/icons-material/Login";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 export default function Navigation() {
   const router = useRouter();
@@ -32,27 +31,23 @@ export default function Navigation() {
             </Typography>
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
-          {/* <MenuItem> */}
-            <Button
-              color="secondary"
-              variant="outlined"
-              onClick={() => router.push("/")}
-              startIcon={<LoginIcon />}
-              sx={{ mr: 2 }}
-            >
-               Login
-            </Button>
-          {/* </MenuItem> */}
-          {/* <MenuItem> */}
-            <Button
-              color="primary"
-              variant="outlined"
-              onClick={() => router.push("/")}
-              startIcon={<PersonAddIcon />}
-            >
-              Sign up
-            </Button>
-          {/* </MenuItem> */}
+          <Button
+            color="secondary"
+            variant="outlined"
+            onClick={() => router.push("/")}
+            startIcon={<LoginIcon />}
+            sx={{ mr: 2 }}
+          >
+            Login
+          </Button>
+          <Button
+            color="primary"
+            variant="outlined"
+            onClick={() => router.push("/")}
+            startIcon={<PersonAddIcon />}
+          >
+            Sign up
+          </Button>
         </Toolbar>
       </AppBar>
     </Box>

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
-  ButtonGroup,
-  Skeleton,
   Box,
   Typography,
   Menu,
   MenuItem,
   useMediaQuery,
+  Container,
+  Divider,
 } from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useTheme } from "@mui/material/styles";
 import axios from "axios";
 
@@ -24,11 +25,14 @@ const MobileCategoryMenu = ({ categories }) => {
   return (
     <div>
       <Button
-        id="basic-button"
-        aria-controls="basic-menu"
+        id="category-button-menu"
+        aria-controls="category-menu"
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
+        startIcon={<MoreVertIcon />}
+        variant="contained"
+        size="large"
       >
         Categories
       </Button>
@@ -83,32 +87,25 @@ export default function FoodCategories() {
   }, []);
 
   return (
-    <Box sx={{ mb: 2 }} textAlign="center">
-      {matches ? (
-        <>
-          <Typography variant="h5">Categories</Typography>
-          <ButtonGroup
-            variant="text"
-            size="large"
-            aria-label="outlined primary button group"
-          >
+    <Container maxWidth="sm" sx={{ mb: 2 }}>
+      <Box textAlign="center">
+        {matches ? (
+          <>
+            <Divider>
+              <Typography variant="h5">Categories</Typography>
+            </Divider>
             {categories.map((category) => (
               <Button key={category.idCategory}>{category.strCategory}</Button>
             ))}
-          </ButtonGroup>
-          <ButtonGroup
-            variant="text"
-            size="large"
-            aria-label="outlined primary button group"
-          >
             {categories2.map((category) => (
               <Button key={category.idCategory}>{category.strCategory}</Button>
             ))}
-          </ButtonGroup>
-        </>
-      ) : (
-        <MobileCategoryMenu categories={mobileCategories} />
-      )}
-    </Box>
+            <Divider />
+          </>
+        ) : (
+          <MobileCategoryMenu categories={mobileCategories} />
+        )}
+      </Box>
+    </Container>
   );
 }

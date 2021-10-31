@@ -69,7 +69,7 @@ export default function ComboBox() {
         }}
         isOptionEqualToValue={(option, value) => option.value === value.value}
         renderInput={(params) => (
-          <TextField {...params} label="Search by ingredient" />
+          <TextField {...params} label="Search by ingredients" placeholder="e.g chicken,garlic,salt" />
         )}
       />
     </>

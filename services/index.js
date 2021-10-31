@@ -31,9 +31,9 @@ export const getById = async (req, res, id) => {
   }
 };
 
-export const getByIngredient = async (req, res, ingredient) => {
+export const getByIngredient = async (req, res, ingredients) => {
   try {
-    const response = await axios.get(`${BASE_URL}/filter.php?i=${ingredient}`);
+    const response = await axios.get(`${BASE_URL}/filter.php?i=${ingredients}`);
     if (response.status === 200) {
       return res.status(200).json(response.data);
     }
