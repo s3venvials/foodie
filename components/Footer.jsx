@@ -10,7 +10,7 @@ export default function BottomAppBar() {
       >
         <Toolbar>
           <Typography variant="body1">
-            All Rights Reserved Base App {new Date().getFullYear()}
+            All Rights Reserved Foodie Cuisine {new Date().getFullYear()}
           </Typography>
         </Toolbar>
       </AppBar>

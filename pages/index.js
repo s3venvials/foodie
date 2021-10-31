@@ -1,8 +1,9 @@
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, Button, ButtonGroup } from "@mui/material";
 import styles from "../styles/Home.module.css";
 
 import CardGrid from "../components/CardGrid";
 import AutoComplete from "../components/AutoComplete";
+import FoodCategories from "../components/FoodCategories";
 
 export default function Home() {
   return (
@@ -27,6 +28,7 @@ export default function Home() {
         </Typography>
 
         <AutoComplete />
+        <FoodCategories />
 
         <CardGrid />
       </Container>

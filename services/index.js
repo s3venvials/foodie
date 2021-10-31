@@ -42,3 +42,15 @@ export const getByIngredient = async (req, res, ingredient) => {
     console.log(error);
   }
 };
+
+export const getCategories = async (req, res) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/categories.php`);
+    if (response.status === 200) {
+      return res.status(200).json(response.data);
+    }
+    return res.status(403).json({ message: "failed to make request" });
+  } catch (error) {
+    console.log(error);
+  }
+};

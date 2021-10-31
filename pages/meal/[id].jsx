@@ -9,6 +9,7 @@ import {
   ListItem,
   ListItemText,
   Box,
+  Skeleton,
 } from "@mui/material";
 import { Favorite, Share } from "@mui/icons-material";
 
@@ -66,6 +67,7 @@ const IngrediantsList = (meal) => {
 
 export default function Meal() {
   const [meal, setMeal] = useState({});
+  const [loaded, setLoaded] = useState(true);
 
   useEffect(() => {
     let active = true;
@@ -77,9 +79,11 @@ export default function Meal() {
 
     const getMealById = async () => {
       try {
+        setLoaded(false);
         const response = await axios.get(
           `/api/mealdb?type=getRecipeById&id=${mealId}`
         );
+        setLoaded(true);
         setMeal(response.data.meals[0]);
       } catch (error) {
         console.log(error);
@@ -98,41 +102,73 @@ export default function Meal() {
   return (
     <Container className="container">
       <Container className="secondaryMain">
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <img src={`${meal.strMealThumb}`} alt="meal" width="100%" />
-            <Grid container>
-              <Grid item xs={8}>
-                <Typography variant="subtitle2" component="h6" sx={{ marginTop: "0.3em" }}>
-                  {meal.strMeal}
-                </Typography>
-              </Grid>
-              <Grid item xs={4}>
-                <IconButton
-                  sx={{ float: "right" }}
-                  aria-label="add to favorites"
-                  title="add to favorites"
-                >
-                  <Favorite />
-                </IconButton>
-                <IconButton
-                  aria-label="share"
-                  title="share"
-                  sx={{ float: "right" }}
-                >
-                  <Share />
-                </IconButton>
-              </Grid>
-            </Grid>
+        <Grid container spacing={3}>
+          {loaded ? (
+            <>
+              <Grid item xs={12} md={6}>
+                <img src={`${meal.strMealThumb}`} alt="meal" width="100%" />
+                <Grid container>
+                  <Grid item xs={8}>
+                    <Typography
+                      variant="subtitle2"
+                      component="h6"
+                      sx={{ marginTop: "0.3em" }}
+                    >
+                      {meal.strMeal}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <IconButton
+                      sx={{ float: "right" }}
+                      aria-label="add to favorites"
+                      title="add to favorites"
+                    >
+                      <Favorite />
+                    </IconButton>
+                    <IconButton
+                      aria-label="share"
+                      title="share"
+                      sx={{ float: "right" }}
+                    >
+                      <Share />
+                    </IconButton>
+                  </Grid>
+                </Grid>
 
-            <Typography variant="h4" paragraph sx={{ mt: 2 }}>
-              Instructions
-            </Typography>
-            <Typography paragraph>{meal.strInstructions}</Typography>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <IngrediantsList meal={meal} />
-          </Grid>
+                <Typography variant="h4" paragraph sx={{ mt: 2 }}>
+                  Instructions
+                </Typography>
+                <Typography paragraph>{meal.strInstructions}</Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <IngrediantsList meal={meal} />
+              </Grid>
+            </>
+          ) : (
+            <>
+              <Grid item xs={12} md={6}>
+                <Box>
+                  <Skeleton variant="rectangular" height={675} />
+                  <Skeleton />
+                  <Skeleton width="60%" />
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <Box>
+                  <Skeleton variant="rectangular" height={675} />
+                  <Skeleton />
+                  <Skeleton width="60%" />
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Box>
+                  <Skeleton variant="rectangular" height={375} />
+                  <Skeleton />
+                  <Skeleton width="60%" />
+                </Box>
+              </Grid>
+            </>
+          )}
         </Grid>
       </Container>
     </Container>

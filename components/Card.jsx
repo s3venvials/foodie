@@ -1,5 +1,5 @@
-import * as React from "react";
-import Link from "next/link";
+import React, { useState } from "react";
+import { useRouter } from "next/router";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -15,6 +15,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Backdrop from "../components/Backdrop";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -28,13 +29,22 @@ const ExpandMore = styled((props) => {
 }));
 
 export default function RecipeReviewCard(meal) {
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [showBackdrop, setShowBackdrop] = useState(false);
+  const router = useRouter();
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
+  const handleNavToRecipe = () => {
+    setShowBackdrop(true);
+    router.push(`/meal/${meal.meal.idMeal}`);
+  }
+
   return (
+    <>
+    <Backdrop isVisible={showBackdrop} />
     <Card sx={{ maxWidth: 345 }} className="customCard">
         <CardHeader
           avatar={
@@ -50,14 +60,13 @@ export default function RecipeReviewCard(meal) {
           title={meal.meal.strMeal}
           subheader={meal.meal.strArea}
         />
-        <Link href={`/meal/${meal.meal.idMeal}`}>
         <CardMedia
           component="img"
           height="194"
           image={meal.meal.strMealThumb}
           alt="Paella dish"
+          onClick={handleNavToRecipe}
         />
-        </Link>
       <CardContent>
         <Typography variant="body2" color="text.secondary" noWrap>
           {meal.meal.strInstructions}
@@ -86,5 +95,6 @@ export default function RecipeReviewCard(meal) {
         </CardContent>
       </Collapse>
     </Card>
+    </>
   );
 }
