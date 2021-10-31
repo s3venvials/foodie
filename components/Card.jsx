@@ -40,25 +40,25 @@ export default function RecipeReviewCard(meal) {
   const handleNavToRecipe = () => {
     setShowBackdrop(true);
     router.push(`/meal/${meal.meal.idMeal}`);
-  }
+  };
 
   return (
     <>
-    <Backdrop isVisible={showBackdrop} />
-    <Card sx={{ maxWidth: 345 }} className="customCard">
+      <Backdrop isVisible={showBackdrop} />
+      <Card sx={{ maxWidth: 345 }} className="customCard">
         <CardHeader
           avatar={
             <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-              {meal.meal.strCategory.charAt(0)}
+              {meal.meal.strCategory?.charAt(0) ?? meal.meal.strMeal.charAt(0)}
             </Avatar>
           }
-          action={
-            <IconButton aria-label="settings">
-              <MoreVertIcon />
-            </IconButton>
-          }
+          // action={
+          //   <IconButton aria-label="settings">
+          //     <MoreVertIcon />
+          //   </IconButton>
+          // }
           title={meal.meal.strMeal}
-          subheader={meal.meal.strArea}
+          subheader={meal.meal.strArea ?? ""}
         />
         <CardMedia
           component="img"
@@ -67,34 +67,40 @@ export default function RecipeReviewCard(meal) {
           alt="Paella dish"
           onClick={handleNavToRecipe}
         />
-      <CardContent>
-        <Typography variant="body2" color="text.secondary" noWrap>
-          {meal.meal.strInstructions}
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </ExpandMore>
-      </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph>Method:</Typography>
-          <Typography paragraph>{meal.meal.strInstructions}</Typography>
-        </CardContent>
-      </Collapse>
-    </Card>
+
+        {meal.meal.strInstructions && (
+          <CardContent>
+            <Typography variant="body2" color="text.secondary" noWrap>
+              {meal.meal.strInstructions ?? ""}
+            </Typography>
+          </CardContent>
+        )}
+
+        <CardActions disableSpacing>
+          <IconButton aria-label="add to favorites">
+            <FavoriteIcon />
+          </IconButton>
+          <IconButton aria-label="share">
+            <ShareIcon />
+          </IconButton>
+          {meal.meal.strInstructions && (
+            <ExpandMore
+              expand={expanded}
+              onClick={handleExpandClick}
+              aria-expanded={expanded}
+              aria-label="show more"
+            >
+              <ExpandMoreIcon />
+            </ExpandMore>
+          )}
+        </CardActions>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <CardContent>
+            <Typography paragraph>Method:</Typography>
+            <Typography paragraph>{meal.meal.strInstructions ?? ""}</Typography>
+          </CardContent>
+        </Collapse>
+      </Card>
     </>
   );
 }

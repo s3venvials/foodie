@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import {
   Button,
   Box,
@@ -13,7 +14,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useTheme } from "@mui/material/styles";
 import axios from "axios";
 
-const MobileCategoryMenu = ({ categories }) => {
+const MobileCategoryMenu = ({ categories, navigateToCategory }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -46,7 +47,12 @@ const MobileCategoryMenu = ({ categories }) => {
         }}
       >
         {categories.map((category) => (
-          <MenuItem key={category.idCategory}>{category.strCategory}</MenuItem>
+          <MenuItem
+            onClick={() => navigateToCategory(category.strCategory)}
+            key={category.idCategory}
+          >
+            {category.strCategory}
+          </MenuItem>
         ))}
       </Menu>
     </div>
@@ -59,6 +65,7 @@ export default function FoodCategories() {
   const [mobileCategories, setMobileCategories] = useState([]);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
+  const router = useRouter();
 
   useEffect(() => {
     let isActive = true;
@@ -86,6 +93,10 @@ export default function FoodCategories() {
     };
   }, []);
 
+  const navigateToCategory = (category) => {
+    router.push(`/category/${category}`);
+  };
+
   return (
     <Container maxWidth="sm" sx={{ mb: 2 }}>
       <Box textAlign="center">
@@ -95,15 +106,28 @@ export default function FoodCategories() {
               <Typography variant="h5">Categories</Typography>
             </Divider>
             {categories.map((category) => (
-              <Button key={category.idCategory}>{category.strCategory}</Button>
+              <Button
+                onClick={() => navigateToCategory(category.strCategory)}
+                key={category.idCategory}
+              >
+                {category.strCategory}
+              </Button>
             ))}
             {categories2.map((category) => (
-              <Button key={category.idCategory}>{category.strCategory}</Button>
+              <Button
+                onClick={() => navigateToCategory(category.strCategory)}
+                key={category.idCategory}
+              >
+                {category.strCategory}
+              </Button>
             ))}
             <Divider />
           </>
         ) : (
-          <MobileCategoryMenu categories={mobileCategories} />
+          <MobileCategoryMenu
+            categories={mobileCategories}
+            navigateToCategory={navigateToCategory}
+          />
         )}
       </Box>
     </Container>

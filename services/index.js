@@ -1,5 +1,5 @@
 import axios from "axios";
-import axiosThrottle from 'axios-request-throttle';
+import axiosThrottle from "axios-request-throttle";
 
 axiosThrottle.use(axios, { requestsPerSecond: 25 });
 
@@ -39,7 +39,9 @@ export const getByIngredient = async (req, res, ingredients) => {
     }
     return res.status(403).json({ message: "failed to make request" });
   } catch (error) {
-    console.log(error);
+    return res
+      .status(500)
+      .json({ message: "There was an issue processing your request." });
   }
 };
 
@@ -51,6 +53,22 @@ export const getCategories = async (req, res) => {
     }
     return res.status(403).json({ message: "failed to make request" });
   } catch (error) {
-    console.log(error);
+    return res
+      .status(500)
+      .json({ message: "There was an issue processing your request." });
+  }
+};
+
+export const getCategoryByName = async (req, res, category) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/filter.php?c=${category}`);
+    if (response.status === 200) {
+      return res.status(200).json(response.data);
+    }
+    return res.status(403).json({ message: "failed to make request" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "There was an issue processing your request." });
   }
 };

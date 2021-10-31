@@ -31,7 +31,7 @@ export default function Navigation() {
             </Typography>
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
-          <Button
+          {/* <Button
             color="secondary"
             variant="outlined"
             onClick={() => router.push("/")}
@@ -47,7 +47,7 @@ export default function Navigation() {
             startIcon={<PersonAddIcon />}
           >
             Sign up
-          </Button>
+          </Button> */}
         </Toolbar>
       </AppBar>
     </Box>

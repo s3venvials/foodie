@@ -3,13 +3,14 @@ import {
   getById,
   getByIngredient,
   getCategories,
+  getCategoryByName,
 } from "../../../services";
 
 export default async function handler(req, res) {
-  const { type, id, ingredient } = req.query;
+  const { type, id, ingredient, category } = req.query;
 
   switch (type) {
-    case "getRandomRecipe":
+    case "getRandomRecipes":
       await getRandom(req, res);
       break;
     case "getRecipeById":
@@ -20,6 +21,9 @@ export default async function handler(req, res) {
       break;
     case "getCategories":
       await getCategories(req, res);
+      break;
+    case "getCategoryByName":
+      await getCategoryByName(req, res, category);
       break;
     default:
       break;
