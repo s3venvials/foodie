@@ -26,7 +26,7 @@ export default function MobileNav() {
       id: 0,
       label: `${session?.user.name ?? ""}`,
       icon: <AccountCircleIcon sx={{ mr: 1 }} />,
-      onClick: () => router.push('/auth/account'),
+      onClick: () => { router.push('/auth/account'); handleClose(); },
     },
     {
       id: 1,
