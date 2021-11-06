@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
@@ -14,6 +13,7 @@ import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Backdrop from "../components/Backdrop";
+import Button from "@mui/material/Button";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -27,7 +27,6 @@ const ExpandMore = styled((props) => {
 }));
 
 export default function RecipeReviewCard({ meal }) {
-  const [session] = useSession();
   const [expanded, setExpanded] = useState(false);
   const [showBackdrop, setShowBackdrop] = useState(false);
   const router = useRouter();
@@ -47,7 +46,7 @@ export default function RecipeReviewCard({ meal }) {
       <Card sx={{ maxWidth: 345 }} className="customCard">
         <CardHeader
           avatar={
-            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" title={meal.strCategory}>
               {meal.strCategory?.charAt(0) ?? meal.strMeal.charAt(0)}
             </Avatar>
           }
@@ -71,6 +70,7 @@ export default function RecipeReviewCard({ meal }) {
         )}
 
         <CardActions disableSpacing>
+          <Button variant="text" onClick={() => router.push(`/meal/${meal.idMeal}`)}>View</Button>
           {meal.strInstructions && (
             <ExpandMore
               expand={expanded}

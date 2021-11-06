@@ -51,7 +51,7 @@ const IngrediantsList = (meal) => {
       }}
     >
       <Typography variant="h4" paragraph>
-        Ingrediants
+        Ingredients
       </Typography>
       <nav aria-label="main ingrediants list">
         <List>
