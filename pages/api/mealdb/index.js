@@ -5,7 +5,7 @@ import {
   getCategories,
   getCategoryByName,
   getSingleRandom,
-} from "../../../services";
+} from "../../../services/mealdb";
 
 export default async function handler(req, res) {
   const { type, id, ingredient, category } = req.query;

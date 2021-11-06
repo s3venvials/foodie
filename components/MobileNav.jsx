@@ -1,7 +1,8 @@
 import React from "react";
 import { useSession, signIn, signOut } from "next-auth/client";
-import { Menu, MenuItem, IconButton, Typography } from "@mui/material";
+import { Menu, MenuItem, IconButton } from "@mui/material";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LoginIcon from "@mui/icons-material/Login";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
@@ -17,6 +18,20 @@ export default function MobileNav() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const links = [
+    {
+      id: 0,
+      label: `${session?.user.name ?? ""}`,
+      icon: <AccountCircleIcon sx={{ mr: 1 }} />,
+    },
+    {
+      id: 1,
+      label: "Sign Out",
+      icon: <ExitToAppIcon sx={{ mr: 1 }} />,
+      onClick: () => signOut(),
+    },
+  ];
 
   return (
     <div>
@@ -37,14 +52,11 @@ export default function MobileNav() {
         onClose={handleClose}
       >
         {session?.user ? (
-          <>
-            <MenuItem onClick={() => signOut()}>
-              <ExitToAppIcon sx={{ mr: 1 }} /> SignOut
+          links.map((link) => (
+            <MenuItem key={link.id} onClick={link.onClick}>
+              {link.icon} {link.label}
             </MenuItem>
-            <MenuItem>
-              <Typography>Welcome {session.user.name}!</Typography>
-            </MenuItem>
-          </>
+          ))
         ) : (
           <MenuItem onClick={() => signIn()}>
             <LoginIcon sx={{ mr: 1 }} /> SignIn
