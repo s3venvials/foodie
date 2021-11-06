@@ -35,7 +35,7 @@ export default function Account() {
           >
             Account
           </Typography>
-          <Box textAlign="center"><img src={user.image} alt="profile-avatar" /></Box>
+          <Box textAlign="center"><img src={user.image} alt="profile-avatar" width="152" height="152" /></Box>
           <Typography variant="h6" align="center" gutterBottom>{user.name}</Typography>
           <Typography variant="h6" align="center" gutterBottom>{user.email}</Typography>
         </Paper>
