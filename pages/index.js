@@ -15,8 +15,15 @@ export default function Home() {
     const getRandomRecipes = async () => {
       try {
         setLoaded(false);
+        if (JSON.parse(sessionStorage.getItem("meals"))) {
+          const cacheMeals = JSON.parse(sessionStorage.getItem("meals"));
+          setMeals([...cacheMeals]);
+          setLoaded(true);
+          return;
+        }
         const response = await axios.get("/api/mealdb?type=getRandomRecipes");
         setMeals([...response.data.meals.slice(0, 9)]);
+        sessionStorage.setItem('meals', JSON.stringify([...response.data.meals.slice(0, 9)]));
         setLoaded(true);
       } catch (error) {
         console.log(error);

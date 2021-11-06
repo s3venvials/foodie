@@ -7,6 +7,12 @@ const UserSchema = new mongoose.Schema({
   emailVerified: Boolean,
   createdAt: Date,
   updatedAt: Date,
+  favorites: [
+    {
+      idMeal: String,
+      strMeal: String,
+    }
+  ],
 });
 
 export default mongoose.models.users || mongoose.model('users', UserSchema);

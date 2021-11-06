@@ -72,11 +72,18 @@ export default function FoodCategories() {
 
     const getCategories = async () => {
       try {
+        if (JSON.parse(sessionStorage.getItem("categories"))) {
+          setCategories(JSON.parse(sessionStorage.getItem("categories")));
+          setCategories2(JSON.parse(sessionStorage.getItem("categories2")));
+          return;
+        }
         const res = await axios.get("/api/mealdb?type=getCategories");
         if (res.status === 200 && res.data) {
           setMobileCategories(res.data.categories);
           setCategories(res.data.categories.slice(0, 6));
           setCategories2(res.data.categories.slice(6, 13));
+          sessionStorage.setItem("categories", JSON.stringify(res.data.categories.slice(0, 6)));
+          sessionStorage.setItem("categories2", JSON.stringify(res.data.categories.slice(6, 13)));
           return;
         }
       } catch (error) {

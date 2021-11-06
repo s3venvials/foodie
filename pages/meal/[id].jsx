@@ -11,7 +11,8 @@ import {
   Box,
   Skeleton,
 } from "@mui/material";
-import { Favorite, Share } from "@mui/icons-material";
+import FavIcon from "../../components/FavIcon";
+import { Share } from "@mui/icons-material";
 
 const IngrediantsList = (meal) => {
   const [list, setList] = useState([]);
@@ -118,13 +119,7 @@ export default function Meal() {
                     </Typography>
                   </Grid>
                   <Grid item xs={4}>
-                    <IconButton
-                      sx={{ float: "right" }}
-                      aria-label="add to favorites"
-                      title="add to favorites"
-                    >
-                      <Favorite />
-                    </IconButton>
+                    <FavIcon meal={meal} style={{ float: "right" }} title="add to favorites" />
                     <IconButton
                       aria-label="share"
                       title="share"
