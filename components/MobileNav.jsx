@@ -1,5 +1,6 @@
 import React from "react";
 import { useSession, signIn, signOut } from "next-auth/client";
+import { useRouter } from "next/router";
 import { Menu, MenuItem, IconButton } from "@mui/material";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -10,6 +11,7 @@ export default function MobileNav() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const [session] = useSession();
+  const router = useRouter();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -24,6 +26,7 @@ export default function MobileNav() {
       id: 0,
       label: `${session?.user.name ?? ""}`,
       icon: <AccountCircleIcon sx={{ mr: 1 }} />,
+      onClick: () => router.push('/auth/account'),
     },
     {
       id: 1,
