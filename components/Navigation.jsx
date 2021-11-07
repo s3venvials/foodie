@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import Fastfood from "@mui/icons-material/Fastfood";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import {
   AppBar,
   Box,
@@ -55,13 +56,24 @@ export default function Navigation() {
                   </Button>
                 </>
               ) : (
+                <>
+                <MenuItem>
                 <Button
                   startIcon={<ExitToAppIcon />}
-                  variant="contained"
+                  variant="text"
                   onClick={() => signIn()}
                 >
                   Sign In
                 </Button>
+                </MenuItem>
+                <Button
+                  startIcon={<PersonAddIcon />}
+                  variant="text"
+                  onClick={() => router.push("/auth/signup")}
+                >
+                  Sign Up
+                </Button>
+                </>
               )}
             </>
           )}
