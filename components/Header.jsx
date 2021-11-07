@@ -15,6 +15,8 @@ export default function Header() {
         property="og:description"
       />
       <meta content="https://foodiecuisines.com" property="og:url" />
+      <meta content={process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID} property="fb:app_id" />
+      <meta content="lifestyle" property="og:type" />
       <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
