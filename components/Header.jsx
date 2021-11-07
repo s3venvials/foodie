@@ -14,7 +14,7 @@ export default function Header() {
         content="View, create and share food recipes"
         property="og:description"
       />
-      <meta content="https://foodiecuisines.com/" property="og:url" />
+      <meta content="https://www.foodiecuisines.com/" property="og:url" />
       <meta content={process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID} property="fb:app_id" />
       <meta content="website" property="og:type" />
       <link
