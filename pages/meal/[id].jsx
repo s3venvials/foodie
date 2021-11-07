@@ -4,7 +4,6 @@ import {
   Container,
   Grid,
   Typography,
-  IconButton,
   List,
   ListItem,
   ListItemText,
@@ -12,7 +11,7 @@ import {
   Skeleton,
 } from "@mui/material";
 import FavIcon from "../../components/FavIcon";
-import { Share } from "@mui/icons-material";
+import ShareButton from "../../components/ShareButton";
 
 const IngrediantsList = (meal) => {
   const [list, setList] = useState([]);
@@ -119,14 +118,17 @@ export default function Meal() {
                     </Typography>
                   </Grid>
                   <Grid item xs={4}>
-                    <FavIcon meal={meal} style={{ float: "right" }} title="add to favorites" />
-                    <IconButton
-                      aria-label="share"
-                      title="share"
-                      sx={{ float: "right" }}
-                    >
-                      <Share />
-                    </IconButton>
+                    <FavIcon
+                      meal={meal}
+                      style={{ float: "right" }}
+                      title="add to favorites"
+                    />
+                    <ShareButton
+                      url={`${process.env.NEXT_PUBLIC_BASE_URL}/${meal.idMeal}`}
+                      style={{ float: "right", marginTop: "0.5em" }}
+                      iconSize={23}
+                      quote="Check out this amazing recipe!"
+                    />
                   </Grid>
                 </Grid>
 
