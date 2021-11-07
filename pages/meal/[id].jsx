@@ -68,6 +68,7 @@ const IngrediantsList = (meal) => {
 export default function Meal() {
   const [meal, setMeal] = useState({});
   const [loaded, setLoaded] = useState(true);
+  const URL = "https://foodiecuisines.com";
 
   useEffect(() => {
     let active = true;
@@ -124,7 +125,7 @@ export default function Meal() {
                       title="add to favorites"
                     />
                     <ShareButton
-                      url={`${process.env.NEXT_PUBLIC_BASE_URL}/${meal.idMeal}`}
+                      url={`${URL}/${meal.idMeal}`}
                       style={{ float: "right", marginTop: "0.5em" }}
                       iconSize={23}
                       quote="Check out this amazing recipe!"
