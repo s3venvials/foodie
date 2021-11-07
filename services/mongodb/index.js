@@ -1,5 +1,6 @@
 import { dbConnect } from "../../lib/dbConnect";
 import user from "../../models/user";
+import account from "../../models/account";
 
 export const getUserByEmail = async (req, res, email) => {
   const { method } = req;
@@ -84,6 +85,32 @@ export const getAllFavRecipes = async (req, res, id) => {
 
     return res.status(200).json([]);
   } catch (error) {
+    return res.status(500).json({ message: error.toString() });
+  }
+};
+
+export const deleteUserAccount = async (req, res, id) => {
+  try {
+    const { method } = req;
+
+    if (method !== "DELETE") {
+      return;
+    }
+
+    await dbConnect();
+
+    const _user = await user.findOne({ email: id });
+    const _account = await account.findOne({ userId: _user._id });
+
+    if (_user && _account) {
+      await user.deleteOne({ _id: _user._id });
+      await account.deleteOne({ userId: _user._id });
+      return res.status(200).json({ message: "success" });
+    }
+
+    return res.status(403).json({ message: "failed" });
+  } catch (error) {
+    console.log(error);
     return res.status(500).json({ message: error.toString() });
   }
 };

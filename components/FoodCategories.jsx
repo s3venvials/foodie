@@ -46,7 +46,7 @@ const MobileCategoryMenu = ({ categories, navigateToCategory }) => {
           "aria-labelledby": "basic-button",
         }}
       >
-        {categories.map((category) => (
+        {categories?.map((category) => (
           <MenuItem
             onClick={() => navigateToCategory(category.strCategory)}
             key={category.idCategory}
@@ -75,6 +75,7 @@ export default function FoodCategories() {
         if (JSON.parse(sessionStorage.getItem("categories"))) {
           setCategories(JSON.parse(sessionStorage.getItem("categories")));
           setCategories2(JSON.parse(sessionStorage.getItem("categories2")));
+          setMobileCategories(JSON.parse(sessionStorage.getItem("mobileCategories")));
           return;
         }
         const res = await axios.get("/api/mealdb?type=getCategories");
@@ -84,6 +85,7 @@ export default function FoodCategories() {
           setCategories2(res.data.categories.slice(6, 13));
           sessionStorage.setItem("categories", JSON.stringify(res.data.categories.slice(0, 6)));
           sessionStorage.setItem("categories2", JSON.stringify(res.data.categories.slice(6, 13)));
+          sessionStorage.setItem("mobileCategories", JSON.stringify(res.data.categories));
           return;
         }
       } catch (error) {

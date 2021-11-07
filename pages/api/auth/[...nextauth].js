@@ -26,7 +26,7 @@ export default NextAuth({
     }),
     Providers.Facebook({
       clientId: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_SECRET
+      clientSecret: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_SECRET,
     }),
   ],
   database: process.env.NEXT_PUBLIC_MONGODB_URI,
