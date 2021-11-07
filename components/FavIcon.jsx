@@ -45,7 +45,9 @@ export default function FavIcon({ meal, style, title }) {
         console.log(error);
       }
     };
-    getFavs();
+    if (session) {
+      getFavs();
+    }
   }, [meal, favorites]);
 
   return (

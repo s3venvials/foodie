@@ -125,7 +125,7 @@ export default function Meal() {
                       title="add to favorites"
                     />
                     <ShareButton
-                      url={`${URL}/${meal.idMeal}`}
+                      url={`${URL}/meal/${meal.idMeal}`}
                       style={{ float: "right", marginTop: "0.5em" }}
                       iconSize={23}
                       quote="Check out this amazing recipe!"
