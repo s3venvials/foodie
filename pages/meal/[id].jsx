@@ -68,7 +68,7 @@ const IngrediantsList = (meal) => {
 export default function Meal() {
   const [meal, setMeal] = useState({});
   const [loaded, setLoaded] = useState(true);
-  const URL = "https://foodiecuisines.com";
+  const URL = "https://www.foodiecuisines.com";
 
   useEffect(() => {
     let active = true;
