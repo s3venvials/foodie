@@ -10,7 +10,9 @@ import {
   ListItemText,
   Box,
   Skeleton,
+  IconButton,
 } from "@mui/material";
+import YouTubeIcon from "@mui/icons-material/YouTube";
 import FavIcon from "../../components/FavIcon";
 import ShareButton from "../../components/ShareButton";
 
@@ -83,7 +85,7 @@ export default function Meal() {
       try {
         setLoaded(false);
         const session = await getSession();
-        
+
         let response = await axios.get(
           `/api/mealdb?type=getRecipeById&id=${idMeal}`
         );
@@ -129,17 +131,29 @@ export default function Meal() {
                     </Typography>
                   </Grid>
                   <Grid item xs={4}>
+                    {meal.strYoutube && (
+                      <IconButton
+                      style={{ float: "right" }}
+                        onClick={() =>
+                          window.open(`${meal.strYoutube}`) ||
+                          window.location.replace(`${meal.strYoutube}`)
+                        }
+                      >
+                        <YouTubeIcon color="error" fontSize="medium" />
+                      </IconButton>
+                    )}
                     <FavIcon
                       meal={meal}
                       style={{ float: "right" }}
                       title="add to favorites"
                     />
+                    <IconButton style={{ float: "right" }}>
                     <ShareButton
                       url={`${URL}/meal/${meal.idMeal}`}
-                      style={{ float: "right", marginTop: "0.5em" }}
                       iconSize={23}
                       quote="Check out this amazing recipe!"
                     />
+                    </IconButton>
                   </Grid>
                 </Grid>
 
