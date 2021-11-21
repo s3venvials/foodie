@@ -166,7 +166,7 @@ export const createRecipe = async (req, res) => {
   }
 };
 
-export const getById = async (req, res, id, email) => {
+export const getById = async (req, res, id) => {
   try {
     const { method } = req;
 
@@ -176,8 +176,14 @@ export const getById = async (req, res, id, email) => {
 
     await dbConnect();
 
-    const _user = await user.findOne({ email });
-    const found = _user.recipes.filter((r) => r.idMeal.toString() === id);
+    const found = [];
+    const _users = await user.find({});
+    _users.forEach((user) => {
+      user.recipes.forEach((r) => {
+        found.push(r);
+      });
+    });
+    
     return res.status(200).json({ meals: found });
   } catch (error) {
     return res

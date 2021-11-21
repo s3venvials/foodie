@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { getSession } from "next-auth/client";
 import {
   Container,
   Grid,
@@ -84,7 +83,6 @@ export default function Meal() {
     const getMealById = async () => {
       try {
         setLoaded(false);
-        const session = await getSession();
 
         let response = await axios.get(
           `/api/mealdb?type=getRecipeById&id=${idMeal}`
@@ -92,7 +90,7 @@ export default function Meal() {
 
         if (response.data.meals === null) {
           response = await axios.get(
-            `/api/mongodb?type=getRecipeById&id=${idMeal}&user=${session.user.email}`
+            `/api/mongodb?type=getRecipeById&id=${idMeal}`
           );
         }
 
@@ -133,7 +131,7 @@ export default function Meal() {
                   <Grid item xs={4}>
                     {meal.strYoutube && (
                       <IconButton
-                      style={{ float: "right" }}
+                        style={{ float: "right" }}
                         onClick={() =>
                           window.open(`${meal.strYoutube}`) ||
                           window.location.replace(`${meal.strYoutube}`)
@@ -147,13 +145,13 @@ export default function Meal() {
                       style={{ float: "right" }}
                       title="add to favorites"
                     />
-                    <IconButton style={{ float: "right" }}>
+
                     <ShareButton
                       url={`${URL}/meal/${meal.idMeal}`}
                       iconSize={23}
                       quote="Check out this amazing recipe!"
+                      style={{ float: "right", marginTop: "0.5em" }}
                     />
-                    </IconButton>
                   </Grid>
                 </Grid>
 

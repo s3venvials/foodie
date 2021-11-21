@@ -29,7 +29,7 @@ export default async function handler(req, res) {
       await createRecipe(req, res);
       break;
     case "getRecipeById":
-      await getById(req, res, id, user);
+      await getById(req, res, id);
       break;
     case "deleteRecipe":
       await deleteRecipe(req, res, id, user);
