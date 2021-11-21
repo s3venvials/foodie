@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getSession } from "next-auth/client";
+import router, { useRouter } from "next/router";
 import axios from "axios";
 import {
   Container,
@@ -15,63 +16,10 @@ import BoxList from "../../components/BoxList";
 import SimpleAccordion from "../../components/Accordion";
 import PopUpMsg from "../../components/PopUpMsg";
 import styles from "../../styles/Home.module.css";
-
-const formSchema = [
-  {
-    id: 0,
-    label: "Recipe Name",
-    name: "strMeal",
-    value: "strMeal",
-    sm: 6,
-    required: true,
-  },
-  {
-    id: 1,
-    label: "Recipe Area",
-    select: true,
-    name: "strArea",
-    value: "strArea",
-    sm: 6,
-    required: true,
-  },
-  {
-    id: 2,
-    label: "Recipe Category",
-    select: true,
-    name: "strCategory",
-    value: "strCategory",
-    sm: 6,
-    required: true,
-  },
-  {
-    id: 3,
-    label: "YouTube Media Link",
-    name: "strYoutube",
-    value: "strYoutube",
-    sm: 6,
-    required: false,
-  },
-  {
-    id: 4,
-    name: "file",
-    value: "file",
-    sm: 12,
-    required: true,
-    type: "file",
-  },
-  {
-    id: 5,
-    label: "Instructions",
-    name: "strInstructions",
-    value: "strInstructions",
-    multiline: true,
-    rows: 10,
-    sm: 12,
-    required: true,
-  },
-];
+const sha1 = require("sha1");
 
 export default function AddRecipe() {
+  const { query, push } = useRouter();
   const [categories, setCategories] = useState([]);
   const [areas, setAreas] = useState([]);
   const [file, setFile] = useState("");
@@ -92,6 +40,110 @@ export default function AddRecipe() {
     ingredients: [],
     public_id: "",
   });
+
+  const formSchema = [
+    {
+      id: 0,
+      label: "Recipe Name",
+      name: "strMeal",
+      value: "strMeal",
+      sm: 6,
+      required: true,
+    },
+    {
+      id: 1,
+      label: "Recipe Area",
+      select: true,
+      name: "strArea",
+      value: "strArea",
+      sm: 6,
+      required: true,
+    },
+    {
+      id: 2,
+      label: "Recipe Category",
+      select: true,
+      name: "strCategory",
+      value: "strCategory",
+      sm: 6,
+      required: true,
+    },
+    {
+      id: 3,
+      label: "YouTube Media Link",
+      name: "strYoutube",
+      value: "strYoutube",
+      sm: 6,
+      required: false,
+    },
+    {
+      id: 4,
+      name: "file",
+      value: "file",
+      sm: 12,
+      required: query.type === "edit" ? false : true,
+      type: "file",
+      message:
+        query.type === "edit"
+          ? "Add a new image to replace or leave blank to use the existing."
+          : "",
+    },
+    {
+      id: 5,
+      label: "Instructions",
+      name: "strInstructions",
+      value: "strInstructions",
+      multiline: true,
+      rows: 10,
+      sm: 12,
+      required: true,
+    },
+  ];
+
+  useEffect(() => {
+    const getRecipe = async () => {
+      try {
+        const session = await getSession();
+        if (!session) {
+          push("/auth/signin");
+        }
+        const res = await axios.get(
+          `/api/mongodb?type=getRecipeById&id=${query.idMeal}&user=${session.user.email}`
+        );
+        if (res.data) {
+          const meal = res.data.meals[0];
+          const {
+            idMeal,
+            strMeal,
+            strArea,
+            strCategory,
+            strInstructions,
+            ingredients,
+            public_id,
+            strYoutube,
+            strMealThumb,
+          } = meal;
+          setState({
+            idMeal,
+            strMeal,
+            strArea,
+            strCategory,
+            strArea,
+            strInstructions,
+            ingredients,
+            public_id,
+            strYoutube,
+            strMealThumb,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (query.idMeal && query.type === "edit") {
+      getRecipe();
+    }
+  }, []);
 
   useEffect(() => {
     const getAreas = async () => {
@@ -122,43 +174,80 @@ export default function AddRecipe() {
   }, []);
 
   const handleSubmit = async (event) => {
+    try {
     event.preventDefault();
     const recipe = state;
     const session = await getSession();
     const formData = new FormData();
     if (session) {
-      formData.append("file", file.file);
-      formData.append("upload_preset", "foodie");
       setLoading(true);
-      const result = await axios.post(
-        "https://api.cloudinary.com/v1_1/frontndev/image/upload",
-        formData
-      );
-      if (result.data) {
-        recipe.strMealThumb = result.data.secure_url;
-        recipe.public_id = result.data.public_id;
+      if (query.type === "edit") {
+        if (file) {
+          // delete old file
+          const d = new Date().getTime() / 1000;
+          const sha = sha1(
+            `public_id=${state.public_id}&timestamp=${d}${process.env.NEXT_PUBLIC_CLOUDINARY_SECRET}`
+          );
+          await axios.post(
+            "https://api.cloudinary.com/v1_1/frontndev/image/destroy",
+            {
+              public_id: state.public_id,
+              timestamp: d,
+              signature: sha,
+              api_key: process.env.NEXT_PUBLIC_CLOUDINARY_ID,
+            }
+          );
+          // add new file
+          formData.append("file", file.file);
+          formData.append("upload_preset", "foodie");
+          setLoading(true);
+          const result = await axios.post(
+            "https://api.cloudinary.com/v1_1/frontndev/image/upload",
+            formData
+          );
+          if (result.data) {
+            recipe.strMealThumb = result.data.secure_url;
+            recipe.public_id = result.data.public_id;
+          }
+        }
+        await axios.post("/api/mongodb?type=editRecipe", {
+          recipe,
+          id: session.user.email,
+        });
+      } else {
+        formData.append("file", file.file);
+        formData.append("upload_preset", "foodie");
+        const result = await axios.post(
+          "https://api.cloudinary.com/v1_1/frontndev/image/upload",
+          formData
+        );
+        if (result.data) {
+          recipe.strMealThumb = result.data.secure_url;
+          recipe.public_id = result.data.public_id;
+        }
+        await axios.post("/api/mongodb?type=createRecipe", {
+          recipe,
+          id: session.user.email,
+        });
+
+        setState({
+          strMeal: "",
+          strArea: "",
+          strCategory: "",
+          strYoutube: "",
+          strInstructions: "",
+        });
       }
-      const res = await axios.post("/api/mongodb?type=createRecipe", {
-        recipe,
-        id: session.user.email,
-      });
     }
 
-    setFile((prevState) => ({
-      ...prevState,
-      file: "",
-    }));
-    setState({
-      strMeal: "",
-      strArea: "",
-      strCategory: "",
-      strYoutube: "",
-      strInstructions: "",
-    });
     setLoading(false);
     setSeverity("success");
-    setMessage("Recipe Added!");
+    setMessage(query.type === "edit" ? "Recipe Edited!" : "Recipe Added!");
     setOpenMsg(true);
+  } catch (error) {
+    setLoading(false);
+    console.log(error);
+  }
   };
 
   const handleFile = (event) => {
@@ -219,12 +308,22 @@ export default function AddRecipe() {
             textAlign="center"
             sx={{ fontWeight: "bold" }}
           >
-            Add Recipe
+            {query.type ? "Edit Recipe" : "Add Recipe"}
           </Typography>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               {formSchema.map((field) => (
                 <Grid item xs={12} sm={field.sm} key={field.id}>
+                  {field.message && (
+                    <Typography
+                      variant="body1"
+                      color="primary"
+                      gutterBottom
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      {field.message}{" "}
+                    </Typography>
+                  )}
                   <TextField
                     size="small"
                     fullWidth

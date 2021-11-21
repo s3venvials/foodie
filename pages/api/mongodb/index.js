@@ -6,6 +6,7 @@ import {
   createRecipe,
   getById,
   deleteRecipe,
+  editRecipe,
 } from "../../../services/mongodb";
 
 export default async function handler(req, res) {
@@ -33,6 +34,8 @@ export default async function handler(req, res) {
     case "deleteRecipe":
       await deleteRecipe(req, res, id, user);
       break;
+    case "editRecipe":
+      await editRecipe(req, res);
     default:
       break;
   }

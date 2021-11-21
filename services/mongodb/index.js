@@ -146,8 +146,6 @@ export const createRecipe = async (req, res) => {
       recipe[`strMeasure${index + 1}`] = measure;
     });
 
-    delete recipe.ingredients;
-
     const randomId = Math.floor(Math.random() * 90000) + 10000;
     recipe.idMeal = randomId.toString();
 
@@ -204,6 +202,44 @@ export const deleteRecipe = async (req, res, idMeal, email) => {
 
     return res.status(200).json({ message: "success" });
   } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "There was an issue processing your request." });
+  }
+};
+
+export const editRecipe = async (req, res) => {
+  try {
+    const { method, body } = req;
+    const { recipe, id } = body;
+    const { ingredients, idMeal } = recipe;
+
+    if (method !== "POST") {
+      return res.status(405).json({ message: "failed" });
+    }
+
+    ingredients.forEach((value, index) => {
+      let ingredient = value.split("-")[0].trim();
+      recipe[`strIngredient${index + 1}`] = ingredient;
+    });
+
+    ingredients.forEach((value, index) => {
+      let measure = value.split("-")[1].trim();
+      recipe[`strMeasure${index + 1}`] = measure;
+    });
+
+    await dbConnect();
+    await user.findOneAndUpdate({ email: id }, { $pull: { recipes: { idMeal } } });
+    await user.findOneAndUpdate(
+      { email: id },
+      {
+        $push: { recipes: recipe },
+      }
+    );
+
+    return res.status(200).json({ message: "success" });
+  } catch (error) {
+    console.log(error);
     return res
       .status(500)
       .json({ message: "There was an issue processing your request." });

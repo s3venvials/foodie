@@ -63,6 +63,7 @@ const UserSchema = new mongoose.Schema({
       strMeasure18: String,
       strMeasure19: String,
       strMeasure20: String,
+      ingredients: Array,
     }
   ],
 });

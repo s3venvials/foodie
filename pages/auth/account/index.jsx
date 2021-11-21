@@ -18,13 +18,14 @@ import {
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import EditIcon from "@mui/icons-material/Edit";
 import SimpleAccordion from "../../../components/Accordion";
 import Modal from "../../../components/Modal";
 import PopUpMsg from "../../../components/PopUpMsg";
 import styles from "../../../styles/Home.module.css";
 const sha1 = require("sha1");
 
-const BoxList = ({ data, isDeleteable, onDelete }) => {
+const BoxList = ({ data, isDeleteable, onDelete, isEditable }) => {
   const router = useRouter();
   const deleteRecipe = async (idMeal, public_id) => {
     const session = await getSession();
@@ -64,13 +65,29 @@ const BoxList = ({ data, isDeleteable, onDelete }) => {
                 sx={{ textAlign: "center" }}
               />
               <ListItemIcon>
-                <IconButton onClick={() => router.push(`/meal/${item.idMeal}`)}>
+                <IconButton
+                  title="view"
+                  onClick={() => router.push(`/meal/${item.idMeal}`)}
+                >
                   <OpenInNewIcon color="primary" />
                 </IconButton>
               </ListItemIcon>
+              {isEditable && (
+                <ListItemIcon>
+                  <IconButton
+                    title="edit"
+                    onClick={() =>
+                      router.push(`/meal/addrecipe?idMeal=${item.idMeal}&type=edit`)
+                    }
+                  >
+                    <EditIcon color="primary" />
+                  </IconButton>
+                </ListItemIcon>
+              )}
               {isDeleteable && (
                 <ListItemIcon>
                   <IconButton
+                    title="delete"
                     onClick={() => deleteRecipe(item.idMeal, item.public_id)}
                   >
                     <DeleteIcon color="error" />
@@ -226,6 +243,7 @@ export default function Account() {
                 <BoxList
                   data={recipes}
                   isDeleteable={true}
+                  isEditable={true}
                   onDelete={removeRecipe}
                 />
               </SimpleAccordion>
