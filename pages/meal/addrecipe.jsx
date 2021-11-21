@@ -9,9 +9,11 @@ import {
   Button,
   Paper,
   MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import BoxList from "../../components/BoxList";
 import SimpleAccordion from "../../components/Accordion";
+import PopUpMsg from "../../components/PopUpMsg";
 import styles from "../../styles/Home.module.css";
 
 const formSchema = [
@@ -75,6 +77,10 @@ export default function AddRecipe() {
   const [file, setFile] = useState("");
   const [ingredient, setIngredient] = useState("");
   const [measurement, setMeasurement] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [openMsg, setOpenMsg] = useState(false);
+  const [message, setMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
   const [state, setState] = useState({
     idMeal: "",
     strMeal: "",
@@ -123,23 +129,25 @@ export default function AddRecipe() {
     if (session) {
       formData.append("file", file.file);
       formData.append("upload_preset", "foodie");
+      setLoading(true);
       const result = await axios.post(
         "https://api.cloudinary.com/v1_1/frontndev/image/upload",
         formData
       );
       if (result.data) {
-        console.log(result);
         recipe.strMealThumb = result.data.secure_url;
         recipe.public_id = result.data.public_id;
       }
-      console.log(recipe);
       const res = await axios.post("/api/mongodb?type=createRecipe", {
         recipe,
         id: session.user.email,
       });
     }
 
-    setFile("");
+    setFile((prevState) => ({
+      ...prevState,
+      file: "",
+    }));
     setState({
       strMeal: "",
       strArea: "",
@@ -147,10 +155,14 @@ export default function AddRecipe() {
       strYoutube: "",
       strInstructions: "",
     });
+    setLoading(false);
+    setSeverity("success");
+    setMessage("Recipe Added!");
+    setOpenMsg(true);
   };
 
   const handleFile = (event) => {
-    const { name, files, value } = event.target;
+    const { name, files } = event.target;
     setFile((prevState) => ({
       ...prevState,
       [name]: files[0],
@@ -178,16 +190,23 @@ export default function AddRecipe() {
 
     setIngredient("");
     setMeasurement("");
+    setSeverity("success");
+    setMessage("Ingredient Added!");
+    setOpenMsg(true);
   };
 
   const handleDelete = (index) => {
     const temp = [...state.ingredients];
     temp.splice(index, 1);
-    
+
     setState((prevState) => ({
       ...prevState,
       ingredients: temp,
     }));
+
+    setMessage("Ingredient Deleted!");
+    setSeverity("error");
+    setOpenMsg(true);
   };
 
   return (
@@ -212,7 +231,7 @@ export default function AddRecipe() {
                     label={field.label}
                     name={field.name}
                     value={
-                      field.name === "file" ? file.name : state[field.value]
+                      field.name === "file" ? file.value : state[field.value]
                     }
                     multiline={field.multiline}
                     rows={field.rows}
@@ -272,12 +291,26 @@ export default function AddRecipe() {
                 </SimpleAccordion>
               </Grid>
               <Grid item xs={12} sm={4} lg={2}>
-                <Button type="submit" variant="contained" fullWidth>
-                  Submit
+                <Button
+                  type="submit"
+                  variant={loading ? "outlined" : "contained"}
+                  fullWidth
+                >
+                  {loading ? (
+                    <CircularProgress color="inherit" size={24} />
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </Grid>
             </Grid>
           </form>
+          <PopUpMsg
+            open={openMsg}
+            severity={severity}
+            message={message}
+            setOpen={(value) => setOpenMsg(value)}
+          />
         </Paper>
       </Container>
     </Container>

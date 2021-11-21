@@ -20,6 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import SimpleAccordion from "../../../components/Accordion";
 import Modal from "../../../components/Modal";
+import PopUpMsg from "../../../components/PopUpMsg";
 import styles from "../../../styles/Home.module.css";
 const sha1 = require("sha1");
 
@@ -90,6 +91,7 @@ export default function Account() {
   const [user, setUser] = useState({ name: "", image: "", email: "" });
   const [recipes, setRecipes] = useState([]);
   const [favs, setFavs] = useState([]);
+  const [openMsg, setOpenMsg] = useState(false);
 
   useEffect(() => {
     let isActive = true;
@@ -137,6 +139,7 @@ export default function Account() {
     const temp2 = favs.filter((f) => f.idMeal !== id);
     setRecipes(temp);
     setFavs(temp2);
+    setOpenMsg(true);
   };
 
   return (
@@ -228,6 +231,12 @@ export default function Account() {
               </SimpleAccordion>
             </Grid>
           </Grid>
+          <PopUpMsg
+            open={openMsg}
+            severity="error"
+            message="Recipe Deleted!"
+            setOpen={(value) => setOpenMsg(value)}
+          />
         </Paper>
       </Container>
     </Container>
