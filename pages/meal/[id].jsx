@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { getSession } from "next-auth/client";
 import {
   Container,
   Grid,
@@ -72,20 +73,29 @@ export default function Meal() {
 
   useEffect(() => {
     let active = true;
-    let mealId;
+    let idMeal;
 
     if (window !== undefined) {
-      mealId = window.location.pathname.split("/")[2];
+      idMeal = window.location.pathname.split("/")[2];
     }
 
     const getMealById = async () => {
       try {
         setLoaded(false);
-        const response = await axios.get(
-          `/api/mealdb?type=getRecipeById&id=${mealId}`
+        const session = await getSession();
+        
+        let response = await axios.get(
+          `/api/mealdb?type=getRecipeById&id=${idMeal}`
         );
+
+        if (response.data.meals === null) {
+          response = await axios.get(
+            `/api/mongodb?type=getRecipeById&id=${idMeal}&user=${session.user.email}`
+          );
+        }
+
         setLoaded(true);
-        setMeal(response.data.meals[0]);
+        setMeal(response.data.meals[0] ?? []);
       } catch (error) {
         console.log(error);
       }

@@ -5,10 +5,11 @@ import {
   getCategories,
   getCategoryByName,
   getSingleRandom,
+  getAreas,
 } from "../../../services/mealdb";
 
 export default async function handler(req, res) {
-  const { type, id, ingredient, category } = req.query;
+  const { type, id, ingredient, category, source, user } = req.query;
 
   switch (type) {
     case "getRandomRecipes":
@@ -18,7 +19,7 @@ export default async function handler(req, res) {
       await getSingleRandom(req, res);
       break;
     case "getRecipeById":
-      await getById(req, res, id);
+      await getById(req, res, id, source, user);
       break;
     case "getByIngredient":
       await getByIngredient(req, res, ingredient);
@@ -28,6 +29,9 @@ export default async function handler(req, res) {
       break;
     case "getCategoryByName":
       await getCategoryByName(req, res, category);
+      break;
+    case "getAreas":
+      await getAreas(req, res);
       break;
     default:
       break;

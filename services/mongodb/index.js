@@ -6,19 +6,21 @@ export const getUserByEmail = async (req, res, email) => {
   const { method } = req;
 
   if (method !== "GET") {
-    return;
+    return res.status(405).json({ message: "failed" });
   }
 
   try {
     await dbConnect();
 
-    const foundUser = await user.find({ email });
+    const foundUser = await user.findOne({ email });
     if (foundUser) {
       return res.status(200).json(foundUser);
     }
     return res.status(204).json({ message: "user not found" });
   } catch (error) {
-    return res.status(500).json({ message: error.toString() });
+    return res
+      .status(500)
+      .json({ message: "There was an issue processing your request." });
   }
 };
 
@@ -26,7 +28,7 @@ export const addFavoriteRecipe = async (req, res) => {
   const { method } = req;
 
   if (method !== "POST") {
-    return;
+    return res.status(405).json({ message: "failed" });
   }
 
   const { id, idMeal, strMeal } = req.body;
@@ -63,7 +65,9 @@ export const addFavoriteRecipe = async (req, res) => {
 
     return res.status(200).json({ favorites: document.favorites, action });
   } catch (error) {
-    return res.status(500).json({ message: error.toString() });
+    return res
+      .status(500)
+      .json({ message: "There was an issue processing your request." });
   }
 };
 
@@ -71,7 +75,7 @@ export const getAllFavRecipes = async (req, res, id) => {
   const { method } = req;
 
   if (method !== "GET") {
-    return;
+    return res.status(405).json({ message: "failed" });
   }
 
   try {
@@ -85,7 +89,9 @@ export const getAllFavRecipes = async (req, res, id) => {
 
     return res.status(200).json([]);
   } catch (error) {
-    return res.status(500).json({ message: error.toString() });
+    return res
+      .status(500)
+      .json({ message: "There was an issue processing your request." });
   }
 };
 
@@ -94,7 +100,7 @@ export const deleteUserAccount = async (req, res, id) => {
     const { method } = req;
 
     if (method !== "DELETE") {
-      return;
+      return res.status(405).json({ message: "failed" });
     }
 
     await dbConnect();
@@ -108,9 +114,98 @@ export const deleteUserAccount = async (req, res, id) => {
       return res.status(200).json({ message: "success" });
     }
 
-    return res.status(403).json({ message: "failed" });
+    return res.status(304).json({ message: "failed" });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: error.toString() });
+    return res
+      .status(500)
+      .json({ message: "There was an issue processing your request." });
+  }
+};
+
+export const createRecipe = async (req, res) => {
+  try {
+    const { method, body } = req;
+    const { recipe, id } = body;
+    const { ingredients } = recipe;
+
+    if (method !== "POST") {
+      return res.status(405).json({ message: "failed" });
+    }
+
+    await dbConnect();
+
+    const _user = await user.findOne({ email: id });
+
+    ingredients.forEach((value, index) => {
+      let ingredient = value.split("-")[0].trim();
+      recipe[`strIngredient${index + 1}`] = ingredient;
+    });
+
+    ingredients.forEach((value, index) => {
+      let measure = value.split("-")[1].trim();
+      recipe[`strMeasure${index + 1}`] = measure;
+    });
+
+    delete recipe.ingredients;
+
+    const randomId = Math.floor(Math.random() * 90000) + 10000;
+    recipe.idMeal = randomId.toString();
+
+    if (_user) {
+      await user.findOneAndUpdate(
+        { email: id },
+        {
+          $push: { recipes: recipe },
+        }
+      );
+    }
+
+    return res.status(200).json({ message: "success" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "There was an issue processing your request." });
+  }
+};
+
+export const getById = async (req, res, id, email) => {
+  try {
+    const { method } = req;
+
+    if (method !== "GET") {
+      return res.status(405).json({ message: "failed" });
+    }
+
+    await dbConnect();
+
+    const _user = await user.findOne({ email });
+    const found = _user.recipes.filter((r) => r.idMeal.toString() === id);
+    return res.status(200).json({ meals: found });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "There was an issue processing your request." });
+  }
+};
+
+export const deleteRecipe = async (req, res, idMeal, email) => {
+  try {
+    const { method } = req;
+
+    if (method !== "PUT") {
+      return res.status(405).json({ message: "failed" });
+    }
+
+    await dbConnect();
+    await user.findOneAndUpdate(
+      { email },
+      { $pull: { recipes: { idMeal }, favorites: { idMeal } } }
+    );
+
+    return res.status(200).json({ message: "success" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "There was an issue processing your request." });
   }
 };
