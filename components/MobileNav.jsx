@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { Menu, MenuItem, IconButton } from "@mui/material";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import PersonIcon from '@mui/icons-material/Person';
 import LoginIcon from "@mui/icons-material/Login";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -26,7 +27,7 @@ export default function MobileNav() {
     {
       id: 0,
       label: `${session?.user.name ?? ""}`,
-      icon: <AccountCircleIcon sx={{ mr: 1 }} />,
+      icon: <PersonIcon sx={{ mr: 1 }} />,
       onClick: () => {
         router.push("/auth/account");
         handleClose();
@@ -34,6 +35,15 @@ export default function MobileNav() {
     },
     {
       id: 1,
+      label: "View Account",
+      icon: <AccountCircleIcon sx={{ mr: 1 }} />,
+      onClick: () => {
+        router.push("/auth/account");
+        handleClose();
+      },
+    },
+    {
+      id: 2,
       label: "Sign Out",
       icon: <ExitToAppIcon sx={{ mr: 1 }} />,
       onClick: () => signOut(),
@@ -61,8 +71,8 @@ export default function MobileNav() {
   return (
     <div>
       <IconButton
-        id="demo-positioned-button"
-        aria-controls="demo-positioned-menu"
+        id="menu-icon"
+        aria-controls="menu-icon"
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
@@ -70,8 +80,8 @@ export default function MobileNav() {
         <RestaurantMenuIcon />
       </IconButton>
       <Menu
-        id="demo-positioned-menu"
-        aria-labelledby="demo-positioned-button"
+        id="mobile-menu"
+        aria-labelledby="mobile-dropdown-menu"
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}

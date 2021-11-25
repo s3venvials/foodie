@@ -13,7 +13,7 @@ export default function FavIcon({ meal, style, title }) {
     const { idMeal, strMeal } = mealObj;
     try {
       const res = await axios.post("/api/mongodb?type=addFavoriteRecipe", {
-        id: session.user.email,
+        id: session.user.id,
         idMeal,
         strMeal,
       });
@@ -33,7 +33,7 @@ export default function FavIcon({ meal, style, title }) {
     const getFavs = async () => {
       try {
         const res = await axios.get(
-          `/api/mongodb?type=getAllFavRecipes&id=${session.user.email}`
+          `/api/mongodb?type=getAllFavRecipes&id=${session.user.id}`
         );
         res.data.map((fav) => {
           if (fav.idMeal === meal.idMeal) {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { getSession, signOut } from "next-auth/client";
+import { getSession, signin, signOut, useSession } from "next-auth/client";
 import {
   Container,
   Typography,
@@ -14,6 +14,7 @@ import {
   ListItemIcon,
   Button,
   IconButton,
+  Skeleton,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -32,7 +33,7 @@ const BoxList = ({ data, isDeleteable, onDelete, isEditable }) => {
     if (session) {
       const response = await axios.put(
         `/api/mongodb?type=deleteRecipe&id=${idMeal}&user=${
-          session?.user?.email ?? ""
+          session?.user?.id ?? ""
         }`
       );
       if (response.status === 200) {
@@ -77,7 +78,9 @@ const BoxList = ({ data, isDeleteable, onDelete, isEditable }) => {
                   <IconButton
                     title="edit"
                     onClick={() =>
-                      router.push(`/meal/addrecipe?idMeal=${item.idMeal}&type=edit`)
+                      router.push(
+                        `/meal/addrecipe?idMeal=${item.idMeal}&type=edit`
+                      )
                     }
                   >
                     <EditIcon color="primary" />
@@ -109,6 +112,7 @@ export default function Account() {
   const [recipes, setRecipes] = useState([]);
   const [favs, setFavs] = useState([]);
   const [openMsg, setOpenMsg] = useState(false);
+  const [session] = useSession();
 
   useEffect(() => {
     let isActive = true;
@@ -117,15 +121,20 @@ export default function Account() {
         const session = await getSession();
 
         if (!session) {
-          router.push("/auth/signin");
+          signin();
+        } else {
+          let res = { status: 0, data: { recipes: [], favorites: [] } };
+          if (session.user.id) {
+            res = await axios.get(
+              `/api/mongodb?type=getUserById&id=${session.user.id}`
+            );
+          }
+          if (res.status === 200 && res.data && isActive) {
+            setUser(res.data);
+            setRecipes(res.data.recipes);
+            setFavs(res.data.favorites);
+          }
         }
-
-        const res = await axios.get(
-          `/api/mongodb?type=getUserByEmail&id=${session.user.email}`
-        );
-        setUser(res.data);
-        setRecipes(res.data.recipes);
-        setFavs(res.data.favorites);
       } catch (error) {
         console.log(error);
       }
@@ -140,8 +149,9 @@ export default function Account() {
 
   const deleteAccount = async () => {
     try {
+      const session = await getSession();
       const res = await axios.delete(
-        `/api/mongodb?type=deleteUserAccount&id=${user.email}`
+        `/api/mongodb?type=deleteUserAccount&id=${session.user.id}`
       );
       if (res.status === 200) {
         signOut();
@@ -162,100 +172,102 @@ export default function Account() {
   return (
     <Container className={styles.container}>
       <Container className={styles.main}>
-        <Paper sx={{ padding: 2 }}>
-          <Typography
-            variant="h3"
-            gutterBottom
-            align="center"
-            sx={{ fontWeight: "bold" }}
-            color="deepskyblue"
-          >
-            Account
-          </Typography>
-          <Box textAlign="center" sx={{ mb: 2 }}>
-            <img
-              src={user.image}
-              alt="profile-avatar"
-              width="152"
-              height="152"
-              style={{ borderRadius: "20em" }}
-            />
-            <Typography variant="h6" align="center" gutterBottom>
-              {user.name}
+        {session && (
+          <Paper sx={{ padding: 2 }}>
+            <Typography
+              variant="h3"
+              gutterBottom
+              align="center"
+              sx={{ fontWeight: "bold" }}
+              color="deepskyblue"
+            >
+              Account
             </Typography>
-            <Typography variant="h6" align="center" gutterBottom>
-              {user.email}
-            </Typography>
+            <Box textAlign="center" sx={{ mb: 2 }}>
+              <img
+                src={user.image}
+                alt="profile-avatar"
+                width="152"
+                height="152"
+                style={{ borderRadius: "20em" }}
+              />
+              <Typography variant="h6" align="center" gutterBottom>
+                {user.name}
+              </Typography>
+              <Typography variant="h6" align="center" gutterBottom>
+                {user.email}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => setOpenModal(true)}
+                  >
+                    Delete Account
+                  </Button>
+                  <Modal
+                    open={openModal}
+                    onClose={() => setOpenModal(false)}
+                    title="Delete Account Confirmation"
+                    dialogContentText="Please select the confirm button to verify that you want to delete your account and that you understand that by doing so your account can not be recovered."
+                    btnActions={
+                      <>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={deleteAccount}
+                        >
+                          Confirm
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => setOpenModal(false)}
+                        >
+                          Cancel
+                        </Button>
+                      </>
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    endIcon={<AddCircleOutlineIcon />}
+                    onClick={() => router.push("/meal/addrecipe")}
+                  >
+                    Add Recipe
+                  </Button>
+                </Grid>
+              </Grid>
+            </Box>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={() => setOpenModal(true)}
-                >
-                  Delete Account
-                </Button>
-                <Modal
-                  open={openModal}
-                  onClose={() => setOpenModal(false)}
-                  title="Delete Account Confirmation"
-                  dialogContentText="Please select the confirm button to verify that you want to delete your account and that you understand that by doing so your account can not be recovered."
-                  btnActions={
-                    <>
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={deleteAccount}
-                      >
-                        Confirm
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => setOpenModal(false)}
-                      >
-                        Cancel
-                      </Button>
-                    </>
-                  }
-                />
+              <Grid item xs={12} sm={6}>
+                <SimpleAccordion title="Favorites">
+                  <BoxList data={favs} />
+                </SimpleAccordion>
               </Grid>
-              <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  color="success"
-                  endIcon={<AddCircleOutlineIcon />}
-                  onClick={() => router.push("/meal/addrecipe")}
-                >
-                  Add Recipe
-                </Button>
+              <Grid item xs={12} sm={6}>
+                <SimpleAccordion title="Recipes">
+                  <BoxList
+                    data={recipes}
+                    isDeleteable={true}
+                    isEditable={true}
+                    onDelete={removeRecipe}
+                  />
+                </SimpleAccordion>
               </Grid>
             </Grid>
-          </Box>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <SimpleAccordion title="Favorites">
-                <BoxList data={favs} />
-              </SimpleAccordion>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <SimpleAccordion title="Recipes">
-                <BoxList
-                  data={recipes}
-                  isDeleteable={true}
-                  isEditable={true}
-                  onDelete={removeRecipe}
-                />
-              </SimpleAccordion>
-            </Grid>
-          </Grid>
-          <PopUpMsg
-            open={openMsg}
-            severity="error"
-            message="Recipe Deleted!"
-            setOpen={(value) => setOpenMsg(value)}
-          />
-        </Paper>
+            <PopUpMsg
+              open={openMsg}
+              severity="error"
+              message="Recipe Deleted!"
+              setOpen={(value) => setOpenMsg(value)}
+            />
+          </Paper>
+        )}
       </Container>
     </Container>
   );

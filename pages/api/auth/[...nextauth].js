@@ -3,14 +3,22 @@ import Providers from "next-auth/providers";
 
 export default NextAuth({
   session: {
-    jwt: true
+    jwt: true,
   },
   pages: {
     signIn: '/auth/signin',
   },
   callbacks: {
-    async redirect(url, baseUrl) {
-      return baseUrl;
+    redirect: async (url, baseUrl) => {
+      return Promise.resolve(baseUrl);
+    },
+    jwt: async (token, user, account, profile, isNewUser) => {
+      user && (token.user = user);
+      return Promise.resolve(token);
+    },
+    session: async (session, user, sessionToken) => {
+      session.user = user.user;
+      return Promise.resolve(session);
     },
   },
   // Configure one or more authentication providers

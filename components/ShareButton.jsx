@@ -8,6 +8,7 @@ export default function ShareButton({ children, url, style, quote, iconSize }) {
       children={children}
       url={url}
       quote={quote}
+      title="Share To Facebook"
     >
       <FacebookIcon size={iconSize} round />
     </FacebookShareButton>

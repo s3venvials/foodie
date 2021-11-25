@@ -1,5 +1,5 @@
 import {
-  getUserByEmail,
+  getUserById,
   addFavoriteRecipe,
   getAllFavRecipes,
   deleteUserAccount,
@@ -13,8 +13,8 @@ export default async function handler(req, res) {
   const { type, id, user } = req.query;
 
   switch (type) {
-    case "getUserByEmail":
-      await getUserByEmail(req, res, id);
+    case "getUserById":
+      await getUserById(req, res, id);
       break;
     case "addFavoriteRecipe":
       await addFavoriteRecipe(req, res);

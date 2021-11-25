@@ -10,6 +10,7 @@ import {
   Box,
   Skeleton,
   IconButton,
+  Paper,
 } from "@mui/material";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import FavIcon from "../../components/FavIcon";
@@ -47,11 +48,11 @@ const IngrediantsList = (meal) => {
     <Box
       sx={{
         width: "100%",
-        maxWidth: 360,
         mb: 5,
       }}
     >
-      <Typography variant="h4" paragraph>
+      <Paper variant="outlined" sx={{ p: 2 }}>
+      <Typography variant="h4" paragraph textAlign="center">
         Ingredients
       </Typography>
       <nav aria-label="main ingrediants list">
@@ -63,6 +64,7 @@ const IngrediantsList = (meal) => {
           ))}
         </List>
       </nav>
+      </Paper>
     </Box>
   );
 };
@@ -113,7 +115,7 @@ export default function Meal() {
   return (
     <Container className="container">
       <Container className="secondaryMain">
-        <Grid container spacing={3}>
+        <Grid container spacing={1}>
           {loaded ? (
             <>
               <Grid item xs={12} md={6}>
@@ -131,6 +133,7 @@ export default function Meal() {
                   <Grid item xs={4}>
                     {meal.strYoutube && (
                       <IconButton
+                        title="View Recipe On YouTube"
                         style={{ float: "right" }}
                         onClick={() =>
                           window.open(`${meal.strYoutube}`) ||
@@ -143,7 +146,7 @@ export default function Meal() {
                     <FavIcon
                       meal={meal}
                       style={{ float: "right" }}
-                      title="add to favorites"
+                      title="Add To Favorites"
                     />
 
                     <ShareButton
@@ -154,11 +157,13 @@ export default function Meal() {
                     />
                   </Grid>
                 </Grid>
-
-                <Typography variant="h4" paragraph sx={{ mt: 2 }}>
+              
+                <Paper variant="outlined" sx={{ p: 2 }}>
+                <Typography variant="h4" paragraph>
                   Instructions
                 </Typography>
                 <Typography paragraph>{meal.strInstructions}</Typography>
+                </Paper>
               </Grid>
               <Grid item xs={12} md={6}>
                 <IngrediantsList meal={meal} />

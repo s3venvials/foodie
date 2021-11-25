@@ -2,7 +2,7 @@ import { dbConnect } from "../../lib/dbConnect";
 import user from "../../models/user";
 import account from "../../models/account";
 
-export const getUserByEmail = async (req, res, email) => {
+export const getUserById = async (req, res, id) => {
   const { method } = req;
 
   if (method !== "GET") {
@@ -12,7 +12,7 @@ export const getUserByEmail = async (req, res, email) => {
   try {
     await dbConnect();
 
-    const foundUser = await user.findOne({ email });
+    const foundUser = await user.findOne({ _id: id });
     if (foundUser) {
       return res.status(200).json(foundUser);
     }
@@ -36,7 +36,7 @@ export const addFavoriteRecipe = async (req, res) => {
   try {
     await dbConnect();
 
-    const _user = await user.findOne({ email: id });
+    const _user = await user.findOne({ _id: id });
     let document;
     let action;
 
@@ -45,14 +45,14 @@ export const addFavoriteRecipe = async (req, res) => {
 
       if (favExist) {
         document = await user.findOneAndUpdate(
-          { email: id },
+          { _id: id },
           { $pull: { favorites: { idMeal } } },
           { returnOriginal: false }
         );
         action = "remove";
       } else {
         document = await user.findOneAndUpdate(
-          { email: id },
+          { _id: id },
           {
             $push: { favorites: { idMeal, strMeal } },
             $currentDate: { lastModified: true },
@@ -81,7 +81,7 @@ export const getAllFavRecipes = async (req, res, id) => {
   try {
     await dbConnect();
 
-    const _user = await user.findOne({ email: id });
+    const _user = await user.findOne({ _id: id });
 
     if (_user && _user.favorites && _user.favorites.length > 0) {
       return res.status(200).json(_user.favorites);
@@ -105,7 +105,7 @@ export const deleteUserAccount = async (req, res, id) => {
 
     await dbConnect();
 
-    const _user = await user.findOne({ email: id });
+    const _user = await user.findOne({ _id: id });
     const _account = await account.findOne({ userId: _user._id });
 
     if (_user && _account) {
@@ -134,7 +134,7 @@ export const createRecipe = async (req, res) => {
 
     await dbConnect();
 
-    const _user = await user.findOne({ email: id });
+    const _user = await user.findOne({ _id: id });
 
     ingredients.forEach((value, index) => {
       let ingredient = value.split("-")[0].trim();
@@ -151,7 +151,7 @@ export const createRecipe = async (req, res) => {
 
     if (_user) {
       await user.findOneAndUpdate(
-        { email: id },
+        { _id: id },
         {
           $push: { recipes: recipe },
         }
@@ -192,7 +192,7 @@ export const getById = async (req, res, id) => {
   }
 };
 
-export const deleteRecipe = async (req, res, idMeal, email) => {
+export const deleteRecipe = async (req, res, idMeal, id) => {
   try {
     const { method } = req;
 
@@ -202,7 +202,7 @@ export const deleteRecipe = async (req, res, idMeal, email) => {
 
     await dbConnect();
     await user.findOneAndUpdate(
-      { email },
+      { _id: id },
       { $pull: { recipes: { idMeal }, favorites: { idMeal } } }
     );
 
@@ -235,9 +235,9 @@ export const editRecipe = async (req, res) => {
     });
 
     await dbConnect();
-    await user.findOneAndUpdate({ email: id }, { $pull: { recipes: { idMeal } } });
+    await user.findOneAndUpdate({ _id: id }, { $pull: { recipes: { idMeal } } });
     await user.findOneAndUpdate(
-      { email: id },
+      { _id: id },
       {
         $push: { recipes: recipe },
       }
