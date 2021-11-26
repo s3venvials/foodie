@@ -42,7 +42,7 @@ const BoxList = ({ data, isDeleteable, onDelete, isEditable }) => {
         const sha = sha1(
           `public_id=${public_id}&timestamp=${d}${process.env.NEXT_PUBLIC_CLOUDINARY_SECRET}`
         );
-        const result = await axios.post(
+        await axios.post(
           "https://api.cloudinary.com/v1_1/frontndev/image/destroy",
           {
             public_id,
@@ -112,6 +112,7 @@ export default function Account() {
   const [recipes, setRecipes] = useState([]);
   const [favs, setFavs] = useState([]);
   const [openMsg, setOpenMsg] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [session] = useSession();
 
   useEffect(() => {
@@ -128,6 +129,7 @@ export default function Account() {
             res = await axios.get(
               `/api/mongodb?type=getUserById&id=${session.user.id}`
             );
+            if (isActive) setLoaded(true);
           }
           if (res.status === 200 && res.data && isActive) {
             setUser(res.data);
@@ -135,9 +137,7 @@ export default function Account() {
             setFavs(res.data.favorites);
           }
         }
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     };
     if (isActive) {
       getUser();
@@ -156,9 +156,7 @@ export default function Account() {
       if (res.status === 200) {
         signOut();
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const removeRecipe = (id) => {
@@ -172,7 +170,7 @@ export default function Account() {
   return (
     <Container className={styles.container}>
       <Container className={styles.main}>
-        {session && (
+        {session && loaded ? (
           <Paper sx={{ padding: 2 }}>
             <Typography
               variant="h3"
@@ -266,6 +264,20 @@ export default function Account() {
               message="Recipe Deleted!"
               setOpen={(value) => setOpenMsg(value)}
             />
+          </Paper>
+        ) : (
+          <Paper>
+            <Typography variant="h3"><Skeleton /></Typography>
+            <Box textAlign="center"><Skeleton variant="circular" width={152} height={152} /></Box>
+            <Typography variant="h6"><Skeleton /></Typography>
+            <Typography variant="h6"><Skeleton /></Typography>
+            <Typography variant="h6"><Skeleton /></Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={6}><Skeleton /></Grid>
+              <Grid item xs={6}><Skeleton /></Grid>
+              <Grid item xs={6}><Skeleton /></Grid>
+              <Grid item xs={6}><Skeleton /></Grid>
+            </Grid>
           </Paper>
         )}
       </Container>
