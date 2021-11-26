@@ -183,7 +183,7 @@ export const getById = async (req, res, id) => {
         found.push(r);
       });
     });
-    
+
     return res.status(200).json({ meals: found });
   } catch (error) {
     return res
@@ -235,7 +235,10 @@ export const editRecipe = async (req, res) => {
     });
 
     await dbConnect();
-    await user.findOneAndUpdate({ _id: id }, { $pull: { recipes: { idMeal } } });
+    await user.findOneAndUpdate(
+      { _id: id },
+      { $pull: { recipes: { idMeal } } }
+    );
     await user.findOneAndUpdate(
       { _id: id },
       {
@@ -245,7 +248,43 @@ export const editRecipe = async (req, res) => {
 
     return res.status(200).json({ message: "success" });
   } catch (error) {
-    console.log(error);
+    return res
+      .status(500)
+      .json({ message: "There was an issue processing your request." });
+  }
+};
+
+export const searchByIngredient = async (req, res, ingredient) => {
+  try {
+    const { method } = req;
+
+    if (method !== "GET") {
+      return res.status(405).json({ message: "failed" });
+    }
+
+    await dbConnect();
+
+    let meals = [];
+    const queryIngredients = ingredient.split(",");
+    const _users = await user.find({});
+
+    _users.forEach((u) => {
+      u.recipes.forEach((r) => {
+        queryIngredients.forEach((item) => {
+          let found = r.ingredients.find((i) =>
+            i.toLowerCase().includes(item.toLowerCase())
+          );
+          if (found !== undefined) {
+            if (meals.includes(r) === false) {
+              meals.push(r);
+            }
+          }
+        });
+      });
+    });
+
+    return res.status(200).json({ meals });
+  } catch {
     return res
       .status(500)
       .json({ message: "There was an issue processing your request." });

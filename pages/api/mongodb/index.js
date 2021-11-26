@@ -7,10 +7,11 @@ import {
   getById,
   deleteRecipe,
   editRecipe,
+  searchByIngredient,
 } from "../../../services/mongodb";
 
 export default async function handler(req, res) {
-  const { type, id, user } = req.query;
+  const { type, id, user, ingredient } = req.query;
 
   switch (type) {
     case "getUserById":
@@ -36,6 +37,10 @@ export default async function handler(req, res) {
       break;
     case "editRecipe":
       await editRecipe(req, res);
+      break;
+    case "searchByIngredient":
+      await searchByIngredient(req, res, ingredient);
+      break;
     default:
       break;
   }
