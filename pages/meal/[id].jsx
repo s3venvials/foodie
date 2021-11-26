@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import axios from "axios";
 import {
   Container,
@@ -7,10 +7,13 @@ import {
   List,
   ListItem,
   ListItemText,
+  ListItemIcon,
+  ListItemButton,
   Box,
   Skeleton,
   IconButton,
   Paper,
+  Checkbox,
 } from "@mui/material";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import FavIcon from "../../components/FavIcon";
@@ -52,18 +55,23 @@ const IngrediantsList = (meal) => {
       }}
     >
       <Paper variant="outlined" sx={{ p: 2 }}>
-      <Typography variant="h4" paragraph textAlign="center">
-        Ingredients
-      </Typography>
-      <nav aria-label="main ingrediants list">
-        <List>
-          {list.map((ingrediant, index) => (
-            <ListItem key={ingrediant + index}>
-              <ListItemText primary={ingrediant} />
-            </ListItem>
-          ))}
-        </List>
-      </nav>
+        <Typography variant="h4" paragraph textAlign="center">
+          Ingredients
+        </Typography>
+        <nav aria-label="main ingrediants list">
+          <List>
+            {list.map((ingrediant, index) => (
+              <Fragment key={ingrediant + index}>
+                <ListItem divider>
+                  <ListItemText primary={ingrediant} />
+                  <ListItemIcon>
+                    <Checkbox />
+                  </ListItemIcon>
+                </ListItem>
+              </Fragment>
+            ))}
+          </List>
+        </nav>
       </Paper>
     </Box>
   );
@@ -75,7 +83,7 @@ export default function Meal() {
   const URL = "https://www.foodiecuisines.com";
 
   useEffect(() => {
-    let active = true;
+    let isActive = true;
     let idMeal;
 
     if (window !== undefined) {
@@ -96,19 +104,21 @@ export default function Meal() {
           );
         }
 
-        setLoaded(true);
-        setMeal(response.data.meals[0] ?? []);
+        if (isActive) {
+          setLoaded(true);
+          setMeal(response.data.meals[0] ?? []);
+        }
       } catch (error) {
-        console.log(error);
+        if (isActive) setMeal([]);
       }
     };
 
-    if (active) {
+    if (isActive) {
       getMealById();
     }
 
     return () => {
-      active = false;
+      isActive = false;
     };
   }, []);
 
@@ -157,12 +167,12 @@ export default function Meal() {
                     />
                   </Grid>
                 </Grid>
-              
+
                 <Paper variant="outlined" sx={{ p: 2 }}>
-                <Typography variant="h4" paragraph>
-                  Instructions
-                </Typography>
-                <Typography paragraph>{meal.strInstructions}</Typography>
+                  <Typography variant="h4" paragraph>
+                    Instructions
+                  </Typography>
+                  <Typography paragraph>{meal.strInstructions}</Typography>
                 </Paper>
               </Grid>
               <Grid item xs={12} md={6}>
