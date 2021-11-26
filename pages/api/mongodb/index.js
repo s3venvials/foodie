@@ -8,10 +8,14 @@ import {
   deleteRecipe,
   editRecipe,
   searchByIngredient,
+  searchByCategory,
 } from "../../../services/mongodb";
 
 export default async function handler(req, res) {
-  const { type, id, user, ingredient } = req.query;
+  const { type, id, user, i, c } = req.query;
+
+  // i ingredient
+  // c category
 
   switch (type) {
     case "getUserById":
@@ -39,7 +43,10 @@ export default async function handler(req, res) {
       await editRecipe(req, res);
       break;
     case "searchByIngredient":
-      await searchByIngredient(req, res, ingredient);
+      await searchByIngredient(req, res, i);
+      break;
+    case "searchByCategory":
+      await searchByCategory(req, res, c);
       break;
     default:
       break;

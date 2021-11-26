@@ -290,3 +290,32 @@ export const searchByIngredient = async (req, res, ingredient) => {
       .json({ message: "There was an issue processing your request." });
   }
 };
+
+export const searchByCategory = async (req, res, category) => {
+  try {
+    const { method } = req;
+
+    if (method !== "GET") {
+      return res.status(405).json({ message: "failed" });
+    }
+
+    await dbConnect();
+
+    let meals = [];
+    const _users = await user.find({});
+
+    _users.forEach((u) => {
+      u.recipes.forEach((r) => {
+        if (r.strCategory.toLowerCase() === category.toLowerCase()) {
+          meals.push(r);
+        }
+      });
+    });
+
+    return res.status(200).json({ meals });
+  } catch {;
+    return res
+      .status(500)
+      .json({ message: "There was an issue processing your request." });
+  }
+};

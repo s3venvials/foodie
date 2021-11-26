@@ -19,16 +19,27 @@ export default function Category() {
     const getRecipesByCategory = async () => {
       try {
         setLoaded(false);
-        const res = await axios.get(
+        let temp = [];
+        const mealsA = await axios.get(
           `/api/mealdb?type=getCategoryByName&category=${category}`
         );
+        const mealsB = await axios.get(`/api/mongodb?type=searchByCategory&c=${category}`);
         setLoaded(true);
 
-        if (res.status === 200 && res.data) {
-          setMeals([...res.data.meals]);
+        if (mealsA.status === 200 && mealsA.data) {
+          if (mealsA.data.meals !== null) {
+            temp = mealsA.data.meals.concat(mealsB.data.meals);
+          } else {
+            temp = mealsB.data.meals;
+          }
+        }
+        const assortedArr = temp.sort((a, b) => a.strMeal.localeCompare(b.strMeal));
+        if (temp.length > 0 && isActive) {
+          setMeals(assortedArr);
+          return;
         }
       } catch (error) {
-        console.log(error);
+        if (isActive) setMeals([]);
       }
     };
 

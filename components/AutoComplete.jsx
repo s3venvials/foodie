@@ -28,7 +28,7 @@ export default function ComboBox() {
           `/api/mealdb?type=getByIngredient&ingredient=${inputValue}`
         );
         const mealsB = await axios.get(
-          `/api/mongodb?type=searchByIngredient&ingredient=${inputValue}`
+          `/api/mongodb?type=searchByIngredient&i=${inputValue}`
         );
 
         let temp = [];
@@ -45,7 +45,7 @@ export default function ComboBox() {
           }
         }
       } catch (error) {
-        setRecipes([]);
+        if (isActive) setRecipes([]);
       }
     };
 
