@@ -1,17 +1,25 @@
 import { AppBar, Box, Toolbar, Typography } from "@mui/material";
 
+function Copyright() {
+  return (
+    <Typography variant="body2" color="text.primary" textAlign="center">
+      {"Copyright © "}
+      Foodie Cuisines {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
+
 export default function BottomAppBar() {
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box>
       <AppBar
         position="fixed"
         color="inherit"
         sx={{ top: "auto", bottom: "0" }}
       >
         <Toolbar>
-          <Typography variant="body1">
-            All Rights Reserved Foodie Cuisine {new Date().getFullYear()}
-          </Typography>
+          <Copyright />
         </Toolbar>
       </AppBar>
     </Box>

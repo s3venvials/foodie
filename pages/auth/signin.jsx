@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/router";
 import { getProviders, signIn } from "next-auth/client";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -13,11 +14,15 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Modal from "../../components/Modal";
+import PrivatePolicy from "../privacypolicy";
 
 const theme = createTheme();
 
 export default function SignIn({ providers }) {
   const [imageUrl, setImageUrl] = useState("");
+  const { push } = useRouter();
+  const [openModal, setOpenModal] = useState(false);
 
   const getColorAndIcon = (name) => {
     switch (name) {
@@ -108,16 +113,52 @@ export default function SignIn({ providers }) {
                   <div key={provider.name}>
                     <Button
                       variant="outlined"
-                      onClick={() => signIn(provider.id)}
+                      onClick={() =>
+                        signIn(provider.id, {
+                          callbackUrl: `${window.location.origin}/auth/account`,
+                        })
+                      }
                       fullWidth
                       startIcon={getColorAndIcon(provider.name).icon}
-                      sx={{ color: `${getColorAndIcon(provider.name).color}`, mb: 2 }}
+                      sx={{
+                        color: `${getColorAndIcon(provider.name).color}`,
+                        mb: 2,
+                      }}
                     >
                       Sign in with {provider.name}
                     </Button>
                   </div>
                 ))}
               </>
+              <Box sx={{ textAlign: "center" }}>
+                <Typography>
+                  By signing in you agree to the{" "}
+                  <Button variant="text" onClick={() => setOpenModal(true)}>
+                    Terms/Policies
+                  </Button>
+                </Typography>
+                <Modal
+                  open={openModal}
+                  onClose={() => setOpenModal(false)}
+                  btnActions={
+                    <>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => setOpenModal(false)}
+                      >
+                        OK
+                      </Button>
+                    </>
+                  }
+                >
+                  <PrivatePolicy />
+                </Modal>
+                <Typography>I dont have an account</Typography>
+                <Button variant="text" onClick={() => push("/auth/signup")}>
+                  Sign Up
+                </Button>
+              </Box>
             </Box>
           </Box>
         </Grid>

@@ -67,7 +67,7 @@ export default function ComboBox() {
         options={recipes}
         getOptionLabel={(recipe) => recipe.strMeal || ""}
         filterOptions={(x) => x}
-        sx={{ mt: 5, mb: 2 }}
+        sx={{ mt: 3, mb: 2 }}
         value={value ?? ""}
         onChange={(event, newValue) => {
           setValue(newValue);

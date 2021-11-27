@@ -22,7 +22,7 @@ import { useTheme } from "@mui/material/styles";
 import MobileNav from "./MobileNav";
 
 export default function Navigation() {
-  const router = useRouter();
+  const { push } = useRouter();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down("sm"));
   const [session] = useSession();
@@ -39,7 +39,7 @@ export default function Navigation() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" color="inherit">
+      <AppBar position="fixed" color="inherit">
         <Toolbar>
           <IconButton
             size="large"
@@ -47,7 +47,7 @@ export default function Navigation() {
             color="primary"
             aria-label="menu"
             sx={{ mr: 2 }}
-            onClick={() => router.push("/")}
+            onClick={() => push("/")}
           >
             <Fastfood />
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -59,6 +59,16 @@ export default function Navigation() {
             <MobileNav />
           ) : (
             <>
+              <MenuItem>
+                <Button variant="text" onClick={() => push("/")}>
+                  Home
+                </Button>
+              </MenuItem>
+              <MenuItem>
+                <Button variant="text" onClick={() => push("/privacypolicy")}>
+                  Terms/Policies
+                </Button>
+              </MenuItem>
               {session?.user ? (
                 <>
                   <div>
@@ -103,7 +113,7 @@ export default function Navigation() {
                 <>
                   <MenuItem>
                     <Button
-                      startIcon={<ExitToAppIcon />}
+                      // startIcon={<ExitToAppIcon />}
                       variant="text"
                       onClick={() => signIn()}
                     >
@@ -111,9 +121,9 @@ export default function Navigation() {
                     </Button>
                   </MenuItem>
                   <Button
-                    startIcon={<PersonAddIcon />}
+                    // startIcon={<PersonAddIcon />}
                     variant="text"
-                    onClick={() => router.push("/auth/signup")}
+                    onClick={() => push("/auth/signup")}
                   >
                     Sign Up
                   </Button>

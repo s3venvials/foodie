@@ -9,9 +9,6 @@ export default NextAuth({
     signIn: '/auth/signin',
   },
   callbacks: {
-    redirect: async (url, baseUrl) => {
-      return Promise.resolve(baseUrl);
-    },
     jwt: async (token, user, account, profile, isNewUser) => {
       user && (token.user = user);
       return Promise.resolve(token);

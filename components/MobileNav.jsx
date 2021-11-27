@@ -4,10 +4,12 @@ import { useRouter } from "next/router";
 import { Menu, MenuItem, IconButton } from "@mui/material";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import PersonIcon from '@mui/icons-material/Person';
+import PersonIcon from "@mui/icons-material/Person";
 import LoginIcon from "@mui/icons-material/Login";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import AppsIcon from '@mui/icons-material/Apps';
+import PolicyIcon from '@mui/icons-material/Policy';
 
 export default function MobileNav() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -64,7 +66,7 @@ export default function MobileNav() {
       onClick: () => {
         router.push("/auth/signup");
         handleClose();
-      }
+      },
     },
   ];
 
@@ -86,6 +88,10 @@ export default function MobileNav() {
         open={open}
         onClose={handleClose}
       >
+        <MenuItem onClick={() => { router.push("/"); handleClose() }}><AppsIcon sx={{ mr: 1 }} /> Home</MenuItem>
+        <MenuItem onClick={() => { router.push("/privacypolicy"); handleClose() }}>
+          <PolicyIcon sx={{ mr: 1 }} /> Terms/Policies
+        </MenuItem>
         {session?.user
           ? links.map((link) => (
               <MenuItem key={link.id} onClick={link.onClick}>

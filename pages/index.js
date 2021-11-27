@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/client";
 import axios from "axios";
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, Button, Box } from "@mui/material";
 import styles from "../styles/Home.module.css";
 
 import CardGrid from "../components/CardGrid";
@@ -10,6 +12,8 @@ import FoodCategories from "../components/FoodCategories";
 export default function Home() {
   const [meals, setMeals] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const { push } = useRouter();
+  const [session] = useSession();
 
   useEffect(() => {
     const getRandomRecipes = async () => {
@@ -23,7 +27,10 @@ export default function Home() {
         }
         const response = await axios.get("/api/mealdb?type=getRandomRecipes");
         setMeals([...response.data.meals.slice(0, 9)]);
-        sessionStorage.setItem('meals', JSON.stringify([...response.data.meals.slice(0, 9)]));
+        sessionStorage.setItem(
+          "meals",
+          JSON.stringify([...response.data.meals.slice(0, 9)])
+        );
         setLoaded(true);
       } catch (error) {
         console.log(error);
@@ -52,6 +59,22 @@ export default function Home() {
           Browse recipes from all over the world, get inspired and create and
           share your own!
         </Typography>
+
+        {!session && (
+          <Box textAlign="center" sx={{ mt: 2 }}>
+            <Button
+              onClick={() =>
+                push(
+                  `/auth/signup?callbackUrl=${process.env.NEXT_PUBLIC_BASE_URL}`
+                )
+              }
+              variant="contained"
+              size="large"
+            >
+              Add Your Recipe
+            </Button>
+          </Box>
+        )}
 
         <AutoComplete />
         <FoodCategories />
