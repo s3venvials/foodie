@@ -92,7 +92,7 @@ export default function Navigation() {
                     >
                       <MenuItem
                         onClick={() => {
-                          router.push("/auth/account");
+                          push("/auth/account");
                           handleClose();
                         }}
                       >
